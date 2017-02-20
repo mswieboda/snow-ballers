@@ -8,12 +8,14 @@ public class PlayerController : MonoBehaviour {
 	public GameObject snowballPanel;
 	public GameObject snowballIconPrefab;
 
-	public float normalForwardBackwardSpeed = 15;
-	public float crouchForwardBackwardSpeed = 5;
+	public float normalForwardSpeed = 10;
+	public float normalBackwardSpeed = 7;
+	public float crouchForwardSpeed = 5;
+	public float crouchBackwardSpeed = 2;
 	public float normalStrafeSpeed = 15;
-	public float crouchStrafeSpeed = 3;
+	public float crouchStrafeSpeed = 2;
 
-	public int millisecondsToMakeSnowball = 500;
+	public float secondsToMakeSnowball = 0.5f;
 	public bool crouchPerSnowballControl = false;
 	public float crouchSpeed = 10;
 	public float crouchYAmount = 0.025f;
@@ -22,12 +24,13 @@ public class PlayerController : MonoBehaviour {
 
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
-
+	public float secondsToThrowSnowball = 0.3f;
 	public int maxSnowballs = 5;
 
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
 	private int snowballs = 0;
+	private float timeLastThrownSnowball;
 
 	// These represent the action of crouching/standing
 	// not if they are in the crouched or standing position
@@ -109,7 +112,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void forwardBackwardMovement() {
-		float forwardBackward = Input.GetAxis ("Vertical") * forwardBackwardSpeed() * Time.deltaTime;
+		float forwardBackward = Input.GetAxis ("Vertical") * Time.deltaTime;
+
+		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
 
 		// -1/1 or 0 depending on if moving
 		forwardDirection = Mathf.Abs(forwardBackward) > 0 ? forwardBackward / Mathf.Abs(forwardBackward) : 0;
@@ -136,9 +141,7 @@ public class PlayerController : MonoBehaviour {
 				else {
 					isCrouched = true;
 
-					int milliseconds = (int)((Time.time - timeCrouchPressed) * 1000);
-
-					if (milliseconds >= millisecondsToMakeSnowball) {
+					if (Time.time - timeCrouchPressed > secondsToMakeSnowball) {
 						timeCrouchPressed = Time.time;
 						addSnowball();
 					}
@@ -176,10 +179,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void throwSnowball() {
-		if (snowballs <= 0 || isGettingSnowball) {
+		if (snowballs <= 0 || isGettingSnowball || Time.time - timeLastThrownSnowball < secondsToThrowSnowball) {
 			return;
 		}
 
+		timeLastThrownSnowball = Time.time;
 		removeSnowball();
 
 		Transform arm, hand;
@@ -217,15 +221,19 @@ public class PlayerController : MonoBehaviour {
 		snowballRotation = snowball.transform.rotation * Quaternion.Euler (-throwAngle, 0, 0);
 
 		// Calculate speed with new rotation, and forward/backward speed
-		forwardForce = forwardDirection * forwardBackwardSpeed() + throwForce;
+		forwardForce = forwardDirection * forwardSpeed() + throwForce;
 		force = snowballRotation * new Vector3 (0, 0, forwardForce);
 
 		// Apply force to snow ball
 		rb.AddForce (force, ForceMode.Impulse);
 	}
 
-	private float forwardBackwardSpeed() {
-		return isCrouched ? crouchForwardBackwardSpeed : normalForwardBackwardSpeed;
+	private float forwardSpeed() {
+		return isCrouched ? crouchForwardSpeed : normalForwardSpeed;
+	}
+
+	private float backwardSpeed() {
+		return isCrouched ? crouchBackwardSpeed : normalBackwardSpeed;
 	}
 
 	private float strafeSpeed() {
