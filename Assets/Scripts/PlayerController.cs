@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 	public GameObject snowballPrefab;
-	public Text headsUpDisplay;
+	public GameObject snowballPanel;
+	public GameObject snowballIconPrefab;
 
 	public float forwardSpeed = 15;
 	public float strafeSpeed = 15;
@@ -195,7 +196,19 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void displaySnowballs() {
-		headsUpDisplay.text = "Snowballs: " + snowballs;
+		// Deletes all snowball icons
+		foreach (Transform child in snowballPanel.transform) {
+			Destroy(child.gameObject);
+		}
+
+		// Creates a snowball icon for each snowball
+		for (int i = 0; i < snowballs; i++) {
+			GameObject icon = (GameObject)Instantiate(snowballIconPrefab);
+			icon.transform.SetParent(snowballPanel.transform);
+			icon.transform.localPosition = new Vector3(0, 0, 0);
+			RectTransform rt = icon.GetComponent<RectTransform>();
+			rt.anchoredPosition3D = new Vector3(10 + i * rt.rect.width + i * 1, 0, 0);
+		}
 	}
 
 	private void clearSnowballs() {
