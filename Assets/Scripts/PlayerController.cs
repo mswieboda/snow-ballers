@@ -10,18 +10,25 @@ public class PlayerController : MonoBehaviour {
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
 
+	// TODO: Make a snowball arsenal with
+	//       different kinds of snowballs (iceballs, etc)
+	private int snowballs;
 	private float forwardDirection;
-	private float strafeDirection;
 
 	void Start () {
 		Cursor.visible = false;
+		snowballs = 0;
 	}
 
 	void Update () {
 		movement ();
 
-		if (Input.GetButtonUp ("Fire1")) {
-			throwSnowball ();
+		if (Input.GetButtonUp("Fire1")) {
+			throwSnowball();
+		}
+
+		if (Input.GetButtonDown("Fire3")) {
+			addSnowball();
 		}
 	}
 
@@ -36,9 +43,6 @@ public class PlayerController : MonoBehaviour {
 		horizontal = Input.GetAxis ("Horizontal") * strafeSpeed * Time.deltaTime;
 		transform.Translate (horizontal, 0, 0);
 
-		// -1/1 or 0 depending on if moving
-		strafeDirection = Mathf.Abs (horizontal) > 0 ? horizontal / Mathf.Abs (horizontal) : 0;
-
 		// Forward/backward movement
 		vertical = Input.GetAxis ("Vertical") * forwardSpeed * Time.deltaTime;
 		transform.Translate(0, 0, vertical);
@@ -48,8 +52,15 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void throwSnowball() {
+		if (snowballs <= 0) {
+			return;
+		}
+
+		// Remove snow ball from inventory
+		snowballs--;
+
 		Transform arm, hand;
-		float forwardForce, playerXAngleDirection;
+		float forwardForce;
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
 		Quaternion rotation, snowballRotation;
@@ -88,5 +99,9 @@ public class PlayerController : MonoBehaviour {
 
 		// Apply force to snow ball
 		rb.AddForce (force, ForceMode.Impulse);
+	}
+
+	private void addSnowball() {
+		snowballs++;
 	}
 }
