@@ -1,14 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
 	public GameObject snowballPrefab;
+	public Text headsUpDisplay;
 	public float forwardSpeed = 15;
 	public float strafeSpeed = 15;
 	public float mouseSensitivity = 5;
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
+	public int maxSnowballs = 5;
 
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
@@ -17,7 +20,7 @@ public class PlayerController : MonoBehaviour {
 
 	void Start () {
 		Cursor.visible = false;
-		snowballs = 0;
+		clearSnowballs();
 	}
 
 	void Update () {
@@ -56,8 +59,7 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		// Remove snow ball from inventory
-		snowballs--;
+		removeSnowball();
 
 		Transform arm, hand;
 		float forwardForce;
@@ -101,7 +103,30 @@ public class PlayerController : MonoBehaviour {
 		rb.AddForce (force, ForceMode.Impulse);
 	}
 
+	private void displaySnowballs() {
+		headsUpDisplay.text = "Snowballs: " + snowballs;
+	}
+
+	private void clearSnowballs() {
+		snowballs = 0;
+		displaySnowballs();
+	}
+
 	private void addSnowball() {
+		if (snowballs >= maxSnowballs) {
+			return;
+		}
+
 		snowballs++;
+		displaySnowballs();
+	}
+
+	private void removeSnowball() {
+		if (snowballs <= 0) {
+			return;
+		}
+
+		snowballs--;
+		displaySnowballs();
 	}
 }
