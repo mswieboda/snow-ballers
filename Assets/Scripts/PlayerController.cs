@@ -50,16 +50,20 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void throwSnowball() {
-		float x, y, forwardForce, playerXAngleDirection;
+		Transform arm;
+		float forwardForce, playerXAngleDirection;
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
 		Quaternion rotation, snowballRotation;
 		GameObject snowball;
 		Rigidbody rb;
 
-		x = transform.position.x; // + transform.localScale.x / releasePointRatioX;
-		y = transform.position.y + transform.localScale.y / releasePointRatioY;
-		position = new Vector3(x, y, transform.position.z);
+		arm = transform.GetChild(0);
+
+		// Get arm position, add scale.y / 2 to get to hand position
+		position = new Vector3(arm.position.x, arm.position.y + transform.localScale.y / 2, arm.position.z);
+
+		// Get rotation from Player
 		rotation = new Quaternion(
 			transform.rotation.x, 
 			transform.rotation.y, 
@@ -80,7 +84,7 @@ public class PlayerController : MonoBehaviour {
 		snowballRotation = snowball.transform.rotation * Quaternion.Euler (-throwAngle, 0, 0);
 
 		// Calculate speed with new rotation, and forward/backward speed
-		forwardForce = forwardDirection * forwardSpeed + throwForce * Time.deltaTime;
+		forwardForce = forwardDirection * forwardSpeed + throwForce;
 		force = snowballRotation * new Vector3 (0, 0, forwardForce);
 
 		// Apply force to snow ball
