@@ -28,6 +28,9 @@ public class PlayerController : MonoBehaviour {
 	private bool isCrouching = false;
 	private bool isStanding = true;
 	private bool isGettingSnowball = false;
+
+	// Represents if they are crouched (true) or standing (false)
+	private bool isCrouched = false;
 	private float standingY;
 
 	private float forwardDirection;
@@ -49,6 +52,10 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetButtonDown("Fire3")) {
 			getSnowball();
+		}
+
+		if (Input.GetButtonDown("Fire2")) {
+			toggleCrouch();
 		}
 	}
 
@@ -83,6 +90,7 @@ public class PlayerController : MonoBehaviour {
 
 		if (transform.position.y - crouchYAmount <= 0.02f) {
 			isCrouching = false;
+			isCrouched = true;
 
 			if(isGettingSnowball) {
 				isStanding = true;
@@ -106,6 +114,7 @@ public class PlayerController : MonoBehaviour {
 		if (standingY - transform.position.y <= 0.02f) {
 			isStanding = false;
 			isGettingSnowball = false;
+			isCrouched = false;
 
 			transform.position = standingPosition;
 		}
@@ -161,6 +170,19 @@ public class PlayerController : MonoBehaviour {
 
 		// Apply force to snow ball
 		rb.AddForce (force, ForceMode.Impulse);
+	}
+
+	private void toggleCrouch() {
+		if (isGettingSnowball || isStanding || isCrouching) {
+			return;
+		}
+			
+		if (isCrouched) {
+			isStanding = true;
+		}
+		else {
+			isCrouching = true;
+		}
 	}
 
 	private void getSnowball() {
