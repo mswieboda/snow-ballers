@@ -56,8 +56,14 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		movement();
 
-		if (Input.GetButtonUp("Fire1")) {
-			throwSnowball();
+		if (snowballs > 0 && !isGettingSnowball && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
+			if (Input.GetButtonDown("Fire1")) {
+				holdSnowball();
+			}
+
+			if (Input.GetButtonUp("Fire1")) {
+				throwSnowball();
+			}	
 		}
 
 		if (crouchPerSnowballControl) {
@@ -179,39 +185,42 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void throwSnowball() {
-		if (snowballs <= 0 || isGettingSnowball || Time.time - timeLastThrownSnowball < secondsToThrowSnowball) {
-			return;
-		}
+	private void holdSnowball() {
+		GameObject heldSnowball = transform.FindChild("HeldSnowball").gameObject;
+		heldSnowball.SetActive(true);
 
+	}
+
+	private void throwSnowball() {
 		timeLastThrownSnowball = Time.time;
 		removeSnowball();
 
-		Transform arm, hand;
+		Transform heldSnowball;
 		float forwardForce;
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
-		Quaternion rotation, snowballRotation;
+		Quaternion snowballRotation;
 		GameObject snowball;
 		Rigidbody rb;
 
-		arm = transform.GetChild(0);
-		hand = arm.GetChild(0);
+		heldSnowball = transform.FindChild("HeldSnowball");
+		heldSnowball.gameObject.SetActive(false);
 
 		// Get arm position, add scale.y / 2 to get to hand position
-		position = new Vector3(hand.position.x, hand.position.y, hand.position.z);
+		position = new Vector3(heldSnowball.position.x, heldSnowball.position.y, heldSnowball.position.z);
+
+		// Create a new snow ball
+		snowball = (GameObject) Instantiate(snowballPrefab, position, Quaternion.identity);
+
+		rb = snowball.GetComponent<Rigidbody> ();
 
 		// Get rotation from Player
-		rotation = new Quaternion(
+		snowballRotation = new Quaternion(
 			transform.rotation.x, 
 			transform.rotation.y, 
 			transform.rotation.z, 
 			transform.rotation.w
 		);
-
-		// Create a new snow ball
-		snowball = (GameObject) Instantiate(snowballPrefab, position, rotation);
-		rb = snowball.GetComponent<Rigidbody> ();
 
 		// If going backwards, make the throw angle larger then normal
 		if (forwardDirection < 0) {
@@ -219,7 +228,7 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		// Add an upwards (negative) throwing angle
-		snowballRotation = snowball.transform.rotation * Quaternion.Euler (-throwAngle, 0, 0);
+		snowballRotation *= Quaternion.Euler (-throwAngle, 0, 0);
 
 		// Calculate speed with new rotation, and forward/backward speed
 		forwardForce = forwardDirection * forwardSpeed() + throwForce;
