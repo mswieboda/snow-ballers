@@ -1117,6 +1117,8 @@ MonoBehaviour:
     type: 2}
   forwardSpeed: 15
   strafeSpeed: 10
+  millisecondsToMakeSnowball: 333
+  crouchPerSnowballControl: 0
   crouchSpeed: 10
   crouchYAmount: 0
   mouseSensitivity: 5
