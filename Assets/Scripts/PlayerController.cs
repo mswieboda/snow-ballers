@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour {
 
 	public float secondsToMakeSnowball = 0.5f;
 	public bool crouchPerSnowballControl = false;
-	public float crouchSpeed = 10;
+	public float crouchAnimationSpeed = 10;
 	public float crouchYAmount = 0.025f;
 
 	public float mouseSensitivity = 5;
@@ -92,10 +92,11 @@ public class PlayerController : MonoBehaviour {
 
 	private void movement() {
 		if (!isGettingSnowball) {
-			mouseLook();
-			strafe();
 			forwardBackwardMovement();
+			strafe();
 		}
+
+		mouseLook();
 
 		crouch();
 		standUp();
@@ -155,7 +156,7 @@ public class PlayerController : MonoBehaviour {
 			transform.position = crouchPosition;
 		}
 		else {
-			transform.position = Vector3.Lerp(transform.position, crouchPosition, crouchSpeed * Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, crouchPosition, crouchAnimationSpeed * Time.deltaTime);
 		}
 	}
 
@@ -174,7 +175,7 @@ public class PlayerController : MonoBehaviour {
 			transform.position = standingPosition;
 		}
 		else {
-			transform.position = Vector3.Lerp(transform.position, standingPosition, crouchSpeed * Time.deltaTime);
+			transform.position = Vector3.Lerp(transform.position, standingPosition, crouchAnimationSpeed * Time.deltaTime);
 		}
 	}
 

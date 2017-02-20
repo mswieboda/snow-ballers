@@ -1116,16 +1116,16 @@ MonoBehaviour:
   snowballIconPrefab: {fileID: 1920991160367998, guid: 6238062aadce34f6db40ceb0abff5015,
     type: 2}
   normalForwardSpeed: 10
-  normalBackwardSpeed: 3
+  normalBackwardSpeed: 5
   crouchForwardSpeed: 3
   crouchBackwardSpeed: 1
   normalStrafeSpeed: 5
   crouchStrafeSpeed: 1
-  secondsToMakeSnowball: 0.75
+  secondsToMakeSnowball: 1
   crouchPerSnowballControl: 0
-  crouchSpeed: 10
+  crouchAnimationSpeed: 13
   crouchYAmount: 0
-  mouseSensitivity: 5
+  mouseSensitivity: 3.5
   throwForce: 50
   throwAngleDefault: 2
   secondsToThrowSnowball: 0.75
