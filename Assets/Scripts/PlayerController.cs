@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void throwSnowball() {
-		Transform arm;
+		Transform arm, hand;
 		float forwardForce, playerXAngleDirection;
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
@@ -59,9 +59,10 @@ public class PlayerController : MonoBehaviour {
 		Rigidbody rb;
 
 		arm = transform.GetChild(0);
+		hand = arm.GetChild(0);
 
 		// Get arm position, add scale.y / 2 to get to hand position
-		position = new Vector3(arm.position.x, arm.position.y + transform.localScale.y / 2, arm.position.z);
+		position = new Vector3(hand.position.x, hand.position.y, hand.position.z);
 
 		// Get rotation from Player
 		rotation = new Quaternion(
