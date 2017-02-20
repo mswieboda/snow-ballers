@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour {
 	public GameObject snowballPrefab;
-	public float forwardSpeed;
-	public float strafeSpeed;
-	public float mouseSensitivity;
-	public float throwForce;
-	public float throwAngleDefault;
-	public float releasePointRatioX;
-	public float releasePointRatioY;
+	public float forwardSpeed = 15;
+	public float strafeSpeed = 15;
+	public float mouseSensitivity = 5;
+	public float throwForce = 50;
+	public float throwAngleDefault = 3;
 
 	private float forwardDirection;
 	private float strafeDirection;
