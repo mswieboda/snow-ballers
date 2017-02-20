@@ -6,32 +6,49 @@ using UnityEngine.UI;
 public class PlayerController : MonoBehaviour {
 	public GameObject snowballPrefab;
 	public Text headsUpDisplay;
+
 	public float forwardSpeed = 15;
 	public float strafeSpeed = 15;
+	public float crouchSpeed = 10;
+	public float crouchYAmount = 0.025f;
+
 	public float mouseSensitivity = 5;
+
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
+
 	public int maxSnowballs = 5;
 
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
-	private int snowballs;
+	private int snowballs = 0;
+
+	// These represent the action of crouching/standing
+	// not if they are in the crouched or standing position
+	private bool isCrouching = false;
+	private bool isStanding = true;
+	private bool isGettingSnowball = false;
+	private float standingY;
+
 	private float forwardDirection;
 
-	void Start () {
+	void Start() {
 		Cursor.visible = false;
+
+		standingY = transform.position.y;
+
 		clearSnowballs();
 	}
 
-	void Update () {
-		movement ();
+	void Update() {
+		movement();
 
 		if (Input.GetButtonUp("Fire1")) {
 			throwSnowball();
 		}
 
 		if (Input.GetButtonDown("Fire3")) {
-			addSnowball();
+			getSnowball();
 		}
 	}
 
@@ -52,6 +69,49 @@ public class PlayerController : MonoBehaviour {
 
 		// -1/1 or 0 depending on if moving
 		forwardDirection = Mathf.Abs (vertical) > 0 ? vertical / Mathf.Abs (vertical) : 0;
+
+		crouch();
+		standUp();
+	}
+
+	private void crouch() {
+		if (!isCrouching) {
+			return;
+		}
+
+		Vector3 crouchPosition = new Vector3(transform.position.x, crouchYAmount, transform.position.z);
+
+		if (transform.position.y - crouchYAmount <= 0.02f) {
+			isCrouching = false;
+
+			if(isGettingSnowball) {
+				isStanding = true;
+				addSnowball();
+			}
+
+			transform.position = crouchPosition;
+		}
+		else {
+			transform.position = Vector3.Lerp(transform.position, crouchPosition, crouchSpeed * Time.deltaTime);
+		}
+	}
+
+	private void standUp() {
+		if (!isStanding) {
+			return;
+		}
+
+		Vector3 standingPosition = new Vector3(transform.position.x, standingY, transform.position.z);
+
+		if (standingY - transform.position.y <= 0.02f) {
+			isStanding = false;
+			isGettingSnowball = false;
+
+			transform.position = standingPosition;
+		}
+		else {
+			transform.position = Vector3.Lerp(transform.position, standingPosition, crouchSpeed * Time.deltaTime);
+		}
 	}
 
 	private void throwSnowball() {
@@ -101,6 +161,15 @@ public class PlayerController : MonoBehaviour {
 
 		// Apply force to snow ball
 		rb.AddForce (force, ForceMode.Impulse);
+	}
+
+	private void getSnowball() {
+		if (snowballs >= maxSnowballs || isGettingSnowball) {
+			return;
+		}
+
+		isCrouching = true;
+		isGettingSnowball = true;
 	}
 
 	private void displaySnowballs() {

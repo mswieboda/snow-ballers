@@ -184,12 +184,12 @@ GameObject:
   - component: {fileID: 136061333}
   - component: {fileID: 136061332}
   m_Layer: 5
-  m_Name: Image
+  m_Name: SnowballIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &136061331
 RectTransform:
   m_ObjectHideFlags: 0
@@ -203,10 +203,10 @@ RectTransform:
   m_Father: {fileID: 1389578238}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -75, y: -15}
+  m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &136061332
 MonoBehaviour:
@@ -227,7 +227,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -628,7 +628,13 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 136704346514183494, guid: 6ef5885277c72e048bed31b6d26cfa53,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 6ef5885277c72e048bed31b6d26cfa53, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &1113740013
@@ -1253,6 +1259,8 @@ MonoBehaviour:
   headsUpDisplay: {fileID: 493827280}
   forwardSpeed: 15
   strafeSpeed: 10
+  crouchSpeed: 10
+  crouchYAmount: 0
   mouseSensitivity: 5
   throwForce: 50
   throwAngleDefault: 2
