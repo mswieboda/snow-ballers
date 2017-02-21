@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour {
 	public GameObject snowballPrefab;
 	public GameObject snowballPanel;
 	public GameObject snowballIconPrefab;
+	public Camera MainCamera;
+	public Camera OTSCam;
+	public GameObject reticle;
 
 	public float normalForwardSpeed = 10;
 	public float normalBackwardSpeed = 7;
@@ -55,6 +58,13 @@ public class PlayerController : MonoBehaviour {
 
 	void Update() {
 		movement();
+
+		if(Input.GetMouseButton(1)){
+			showOTSCam();
+		}
+		else {
+			showMainCam();
+		}
 
 		if (snowballs > 0 && !isGettingSnowball && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
 			if (Input.GetButtonDown("Fire1")) {
@@ -311,5 +321,17 @@ public class PlayerController : MonoBehaviour {
 
 		snowballs--;
 		displaySnowballs();
+	}
+
+	public void showMainCam() {
+		MainCamera.enabled = true;
+		OTSCam.enabled = false;
+		reticle.SetActive(false);
+	}
+
+	public void showOTSCam() {
+		OTSCam.enabled = true;
+		MainCamera.enabled = false;
+		reticle.SetActive(true);
 	}
 }
