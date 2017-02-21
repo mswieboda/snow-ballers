@@ -1188,7 +1188,7 @@ MonoBehaviour:
   crouchBackwardSpeed: 1
   normalStrafeSpeed: 5
   crouchStrafeSpeed: 1
-  secondsToMakeSnowball: 1
+  secondsToMakeSnowball: 0.75
   crouchPerSnowballControl: 0
   crouchAnimationSpeed: 9
   crouchYAmount: 0
@@ -1196,7 +1196,7 @@ MonoBehaviour:
   throwForce: 50
   throwAngleDefault: 2
   secondsToThrowSnowball: 0.5
-  maxSnowballs: 5
+  maxSnowballs: 10
 --- !u!1 &2093656276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1228,7 +1228,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 08a69a1fadea66940955bf97ad0c406a, type: 2}
+  - {fileID: 2100000, guid: 96dc1d38b2a1c764d8d221309df60783, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
