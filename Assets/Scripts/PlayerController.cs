@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour {
 
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
-	private int snowballs = 0;
+	private int snowballs = 10;
 	private float timeLastThrownSnowball;
 
 	// These represent the action of crouching/standing
@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour {
 
 		standingY = transform.position.y;
 
-		clearSnowballs();
+		displaySnowballs();
 	}
 
 	void Update() {
@@ -192,19 +192,26 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void throwSnowball() {
+		Transform heldSnowball;
+		heldSnowball = transform.FindChild("HeldSnowball");
+
+		// If we're not holding the "fake" held snowball, don't (create) throw one
+		if (heldSnowball.gameObject.activeSelf == false) {
+			return;
+		}
+
+		heldSnowball.gameObject.SetActive(false);
+
 		timeLastThrownSnowball = Time.time;
 		removeSnowball();
 
-		Transform heldSnowball;
+
 		float forwardForce;
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
 		Quaternion snowballRotation;
 		GameObject snowball;
 		Rigidbody rb;
-
-		heldSnowball = transform.FindChild("HeldSnowball");
-		heldSnowball.gameObject.SetActive(false);
 
 		// Get arm position, add scale.y / 2 to get to hand position
 		position = new Vector3(heldSnowball.position.x, heldSnowball.position.y, heldSnowball.position.z);
@@ -286,11 +293,6 @@ public class PlayerController : MonoBehaviour {
 			RectTransform rt = icon.GetComponent<RectTransform>();
 			rt.anchoredPosition3D = new Vector3(10 + i * rt.rect.width + i * 1, 0, 0);
 		}
-	}
-
-	private void clearSnowballs() {
-		snowballs = 0;
-		displaySnowballs();
 	}
 
 	private void addSnowball() {

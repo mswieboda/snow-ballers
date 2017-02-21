@@ -1195,7 +1195,7 @@ MonoBehaviour:
   mouseSensitivity: 3.5
   throwForce: 50
   throwAngleDefault: 2
-  secondsToThrowSnowball: 0.75
+  secondsToThrowSnowball: 0.5
   maxSnowballs: 5
 --- !u!1 &2093656276
 GameObject:
