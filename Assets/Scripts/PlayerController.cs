@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour {
 			if (Input.GetButtonUp("Fire3")) {
 				timeCrouchPressed = 0;
 
-
+				isGettingSnowball = false;
 				isCrouching = false;
 				isStanding = true;
 			}
@@ -139,6 +139,7 @@ public class PlayerController : MonoBehaviour {
 		if (transform.position.y - crouchYAmount <= 0.02f) {
 			if(isGettingSnowball) {
 				if (crouchPerSnowballControl) {
+					isGettingSnowball = false;
 					isCrouching = false;
 					isCrouched = true;
 					isStanding = true;
@@ -175,7 +176,6 @@ public class PlayerController : MonoBehaviour {
 
 		if (standingY - transform.position.y <= 0.02f) {
 			isStanding = false;
-			isGettingSnowball = false;
 			isCrouched = false;
 
 			transform.position = standingPosition;

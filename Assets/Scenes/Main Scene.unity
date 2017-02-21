@@ -1190,7 +1190,7 @@ MonoBehaviour:
   crouchStrafeSpeed: 1
   secondsToMakeSnowball: 1
   crouchPerSnowballControl: 0
-  crouchAnimationSpeed: 13
+  crouchAnimationSpeed: 9
   crouchYAmount: 0
   mouseSensitivity: 3.5
   throwForce: 50
