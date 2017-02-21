@@ -18,6 +18,8 @@ ExportedObj/
 *.booproj
 *.svd
 
+# Different Users have different versions, ignore this for now
+ProjectSettings/ProjectVersion.txt
 
 # Unity3D generated meta files
 *.pidb.meta
