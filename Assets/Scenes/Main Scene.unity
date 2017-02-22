@@ -465,7 +465,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4593146726564232, guid: 6ef5885277c72e048bed31b6d26cfa53, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 100
+      value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 4593146726564232, guid: 6ef5885277c72e048bed31b6d26cfa53, type: 2}
       propertyPath: m_LocalPosition.z
@@ -831,9 +831,7 @@ RectTransform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
-  m_Children:
-  - {fileID: 1389578238}
-  - {fileID: 83506296}
+  m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1060,7 +1058,7 @@ Prefab:
     - target: {fileID: 224640276821360244, guid: fba0a6835eb65a44e8a25790785f59e9,
         type: 2}
       propertyPath: m_RootOrder
-      value: 10
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 224640276821360244, guid: fba0a6835eb65a44e8a25790785f59e9,
         type: 2}
@@ -1312,7 +1310,7 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2.3
+  m_Height: 2.1
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.3
@@ -1341,7 +1339,7 @@ MonoBehaviour:
   snowballIconPrefab: {fileID: 1920991160367998, guid: 6238062aadce34f6db40ceb0abff5015,
     type: 2}
   MainCamera: {fileID: 1986649369}
-  OTSCam: {fileID: 1637417847}
+  OTSCamera: {fileID: 1637417847}
   reticle: {fileID: 83506295}
   normalForwardSpeed: 10
   normalBackwardSpeed: 5
@@ -1352,7 +1350,7 @@ MonoBehaviour:
   secondsToMakeSnowball: 0.75
   crouchPerSnowballControl: 0
   crouchAnimationSpeed: 9
-  crouchYAmount: 0
+  crouchYTarget: 0.025
   mouseSensitivity: 3.5
   throwForce: 50
   throwAngleDefault: 2
