@@ -32,6 +32,7 @@ public class PlayerController : MonoBehaviour {
 
 	private CharacterController characterController;
 	private Vector3 movementVector;
+	private float verticalVelocity = 0;
 
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
@@ -55,6 +56,7 @@ public class PlayerController : MonoBehaviour {
 		Cursor.visible = false;
 
 		characterController = GetComponent<CharacterController>();
+		movementVector = characterController.transform.position;
 		standingY = transform.position.y;
 
 		displaySnowballs();
@@ -111,6 +113,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void movement() {
+		verticalMovement();
+
 		if (!isGettingSnowball) {
 			forwardBackwardMovement();
 			strafe();
@@ -125,6 +129,16 @@ public class PlayerController : MonoBehaviour {
 		movementVector = transform.rotation * movementVector * Time.deltaTime;
 
 		characterController.Move(movementVector);
+	}
+
+	private void verticalMovement() {
+		if(!characterController.isGrounded) {
+			verticalVelocity += Physics.gravity.y * Time.deltaTime;
+			movementVector.y += verticalVelocity;
+		}
+		else {
+			verticalVelocity = 0;
+		}
 	}
 
 	private void mouseLook() {
