@@ -17,3 +17,5 @@ Right Mouse (1) - Click and hold to switch to Over The Shoulder (OTS) camera
 Left Shift (Fire3) - Hold down to pick up/make snowballs
 
 Left Alt (Fire2) - Toggle crouch/stand up
+
+TEMPORARY: Pressing "escape" quits the application
