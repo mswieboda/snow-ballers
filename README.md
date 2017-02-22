@@ -16,4 +16,6 @@ Left Shift (Fire3) - Hold down to pick up/make snowballs
 
 Left Alt/Mouse Left Click (Fire2) - Click and hold to switch to Over The Shoulder (OTS) camera
 
+Left Command/Left Windows (Fire4) - Toggle crouch
+
 TEMPORARY: Pressing "escape" quits the application

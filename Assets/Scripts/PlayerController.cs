@@ -4,6 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
+	public GameObject armObject;
+	public GameObject heldSnowballObject;
+
+	public GameObject crouchObject;
+	public GameObject crouchArmObject;
+	public GameObject crouchHeldSnowballObject;
+
 	public GameObject snowballPrefab;
 	public GameObject snowballPanel;
 	public GameObject snowballIconPrefab;
@@ -101,9 +108,9 @@ public class PlayerController : MonoBehaviour {
 
 			// TODO: Disabling for now as it's not compatible with
 			//       CharacterController and moving halfway in Plane
-			// if (Input.GetButtonDown("Fire2")) {
-			//	toggleCrouch();
-			// }
+			 if (Input.GetButtonDown("Fire4")) {
+				toggleCrouch();
+			 }
 
 			if(Input.GetButton("Fire2")){
 				showOTSCamera();
@@ -127,8 +134,8 @@ public class PlayerController : MonoBehaviour {
 		crouch();
 		standUp();
 
-		// Apply rotation to vector
 		if(characterController.enabled) {
+			// Apply rotation to vector
 			movementVector = transform.rotation * movementVector * Time.deltaTime;
 			characterController.Move(movementVector);
 		}
@@ -137,7 +144,7 @@ public class PlayerController : MonoBehaviour {
 	private void verticalMovement() {
 		if(!characterController.isGrounded) {
 			verticalVelocity += Physics.gravity.y * Time.deltaTime;
-			movementVector.y += verticalVelocity;
+			movementVector.y = verticalVelocity;
 		}
 		else {
 			verticalVelocity = 0;
@@ -225,21 +232,19 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void holdSnowball() {
-		GameObject heldSnowball = transform.FindChild("HeldSnowball").gameObject;
+		GameObject heldSnowball = isCrouched ? crouchHeldSnowballObject : heldSnowballObject;
 		heldSnowball.SetActive(true);
-
 	}
 
 	private void throwSnowball() {
-		Transform heldSnowball;
-		heldSnowball = transform.FindChild("HeldSnowball");
+		GameObject heldSnowball = isCrouched ? crouchHeldSnowballObject : heldSnowballObject;
 
 		// If we're not holding the "fake" held snowball, don't (create) throw one
-		if (heldSnowball.gameObject.activeSelf == false) {
+		if (heldSnowball.activeSelf == false) {
 			return;
 		}
 
-		heldSnowball.gameObject.SetActive(false);
+		heldSnowball.SetActive(false);
 
 		timeLastThrownSnowball = Time.time;
 		removeSnowball();
@@ -253,7 +258,7 @@ public class PlayerController : MonoBehaviour {
 		Rigidbody rb;
 
 		// Get arm position, add scale.y / 2 to get to hand position
-		position = new Vector3(heldSnowball.position.x, heldSnowball.position.y, heldSnowball.position.z);
+		position = new Vector3(heldSnowball.transform.position.x, heldSnowball.transform.position.y, heldSnowball.transform.position.z);
 
 		// Create a new snow ball
 		snowball = (GameObject) Instantiate(snowballPrefab, position, Quaternion.identity);
@@ -300,12 +305,25 @@ public class PlayerController : MonoBehaviour {
 		if (isGettingSnowball || isStanding || isCrouching) {
 			return;
 		}
-			
-		if (isCrouched) {
-			isStanding = true;
+
+		isCrouched = !isCrouched;
+
+		MeshRenderer renderer = GetComponent<MeshRenderer>();
+
+		renderer.enabled = !isCrouched;
+		armObject.SetActive(!isCrouched);
+
+		crouchObject.SetActive(isCrouched);
+		crouchArmObject.SetActive(isCrouched);
+
+		// If we were holding a snowball, keep holding it after toggle
+		if (isCrouched && heldSnowballObject.activeSelf) {
+			heldSnowballObject.SetActive(false);
+			crouchHeldSnowballObject.SetActive(true);
 		}
-		else {
-			isCrouching = true;
+		else if (!isCrouched && crouchHeldSnowballObject.activeSelf) {
+			crouchHeldSnowballObject.SetActive(false);
+			heldSnowballObject.SetActive(true);
 		}
 	}
 
