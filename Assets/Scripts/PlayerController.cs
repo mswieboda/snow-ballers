@@ -30,6 +30,9 @@ public class PlayerController : MonoBehaviour {
 	public float secondsToThrowSnowball = 0.3f;
 	public int maxSnowballs = 5;
 
+	private CharacterController characterController;
+	private Vector3 movementVector;
+
 	// TODO: Make a snowball arsenal with
 	//       different kinds of snowballs (iceballs, etc)
 	private int snowballs = 10;
@@ -51,6 +54,7 @@ public class PlayerController : MonoBehaviour {
 	void Start() {
 		Cursor.visible = false;
 
+		characterController = GetComponent<CharacterController>();
 		standingY = transform.position.y;
 
 		displaySnowballs();
@@ -116,6 +120,11 @@ public class PlayerController : MonoBehaviour {
 
 		crouch();
 		standUp();
+
+		// Apply rotation to vector
+		movementVector = transform.rotation * movementVector * Time.deltaTime;
+
+		characterController.Move(movementVector);
 	}
 
 	private void mouseLook() {
@@ -124,19 +133,18 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void strafe() {
-		float horizontal = Input.GetAxis ("Horizontal") * strafeSpeed() * Time.deltaTime;
-		transform.Translate (horizontal, 0, 0);
+		movementVector.x = Input.GetAxis ("Horizontal") * strafeSpeed();
 	}
 
 	private void forwardBackwardMovement() {
-		float forwardBackward = Input.GetAxis ("Vertical") * Time.deltaTime;
+		float forwardBackward = Input.GetAxis ("Vertical");
 
 		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
 
 		// -1/1 or 0 depending on if moving
 		forwardDirection = Mathf.Abs(forwardBackward) > 0 ? forwardBackward / Mathf.Abs(forwardBackward) : 0;
 
-		transform.Translate(0, 0, forwardBackward);
+		movementVector.z = forwardBackward;
 	}
 
 	private void crouch() {
