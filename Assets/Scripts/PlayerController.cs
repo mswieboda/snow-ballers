@@ -119,6 +119,8 @@ public class PlayerController : MonoBehaviour {
 				showMainCamera();
 			}
 		}
+			
+
 	}
 
 	private void movement() {
@@ -146,8 +148,13 @@ public class PlayerController : MonoBehaviour {
 			verticalVelocity += Physics.gravity.y * Time.deltaTime;
 			movementVector.y = verticalVelocity;
 		}
+		else if(characterController.isGrounded && Input.GetButtonDown("Jump")) {
+			verticalVelocity = 10;
+			movementVector.y = verticalVelocity;
+		}
 		else {
 			verticalVelocity = 0;
+			movementVector.y = -0.1f;
 		}
 	}
 
