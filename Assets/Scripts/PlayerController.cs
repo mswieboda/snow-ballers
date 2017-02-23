@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour {
 		Cursor.visible = false;
 
 		characterController = GetComponent<CharacterController>();
-		movementVector = characterController.transform.position;
+		movementVector = new Vector3();
 		standingY = transform.position.y;
 
 		displaySnowballs();

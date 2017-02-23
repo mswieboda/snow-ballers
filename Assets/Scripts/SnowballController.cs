@@ -19,10 +19,12 @@ public class SnowballController : MonoBehaviour {
 	}
 
 	void createSplattedSnowball(Collision collision) {
+		GameObject splat;
 		ContactPoint contact = collision.contacts[0];
 		Quaternion rot = Quaternion.FromToRotation(Vector3.up, contact.normal);
 		Vector3 pos = contact.point;
 
-		Instantiate(splattedSnowballPrefab, pos, rot);
+		splat = Instantiate(splattedSnowballPrefab, pos, rot);
+		splat.transform.SetParent(collision.transform);
 	}
 }
