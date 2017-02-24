@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour {
 	public float crouchBackwardSpeed = 2;
 	public float normalStrafeSpeed = 15;
 	public float crouchStrafeSpeed = 2;
+	public float jumpSpeed = 5;
+	public float airDragSpeed = -5f;
 	public float mouseSensitivity = 5;
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour {
 	private float forwardDirection;
 	private float forwardBackward;
 	private float sideToSide;
+	private float sideToSideDirection;
 	private Vector3 jumpVector;
 	private Quaternion jumpRotation;
 
@@ -111,35 +114,41 @@ public class PlayerController : MonoBehaviour {
 			jumpVector.y = verticalVelocity;
 			jumpVector.z = forwardBackward;
 			jumpVector.x = sideToSide;
+
+			// Apply air drag
+			forwardBackward += forwardBackward * airDragSpeed * Time.deltaTime;
+			sideToSide += sideToSideDirection * airDragSpeed * Time.deltaTime;
 		}
 		else if(characterController.isGrounded && Input.GetButtonDown("Jump")) {
-			jumpVector.x = sideToSide;
-			jumpVector.z = forwardBackward;
 			jumpRotation = transform.rotation;
-			Debug.Log(jumpVector);
-			verticalVelocity = 10;
+			verticalVelocity = jumpSpeed;
 			movementVector.y = verticalVelocity;
 		}
 		else {
+			jumpRotation = transform.rotation;
 			verticalVelocity = 0;
 			jumpVector.y = -0.1f;
 			movementVector.y = -0.1f;
 		}
+
 	}
 
 	private void mouseLook() {
-		float mouseRotation = Input.GetAxis ("Mouse X") * mouseSensitivity;
-		transform.Rotate (0, mouseRotation, 0);
+		float mouseRotation = Input.GetAxis("Mouse X") * mouseSensitivity;
+		transform.Rotate(0, mouseRotation, 0);
 	}
 
 	private void strafe() {
-		sideToSide = Input.GetAxis ("Horizontal") * strafeSpeed();
+		sideToSide = Input.GetAxis("Horizontal") * strafeSpeed();
+
+		// -1/1 or 0 depending on if moving
+		sideToSideDirection = Mathf.Abs(sideToSide) > 0 ? sideToSide / Mathf.Abs(sideToSide) : 0;
+
 		movementVector.x = sideToSide;
 	}
 
 	private void forwardBackwardMovement() {
-		
-		forwardBackward = Input.GetAxis ("Vertical");
+		forwardBackward = Input.GetAxis("Vertical");
 		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
 
 		// -1/1 or 0 depending on if moving

@@ -2005,6 +2005,8 @@ MonoBehaviour:
   crouchBackwardSpeed: 1
   normalStrafeSpeed: 5
   crouchStrafeSpeed: 1
+  jumpSpeed: 7.5
+  airDragSpeed: -0.97
   mouseSensitivity: 3.5
   throwForce: 50
   throwAngleDefault: 2
