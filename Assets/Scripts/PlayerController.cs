@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour {
 	public GameObject snowballPanelGO;
 	public GameObject snowballIconPrefab;
 
+	public GameObject staminaPanelGO;
+
 	public float normalForwardSpeed = 10;
 	public float crouchForwardSpeed = 5;
 	public float sprintForwardSpeed = 15;
@@ -48,10 +50,17 @@ public class PlayerController : MonoBehaviour {
 
 	public int maxSnowballs = 5;
 
+	public float maxStamina = 100;
+	public float minStamina = 5;
+	public float walkStaminaAmount = 0.5f;
+	public float sprintStaminaAmount = 5;
+	public float gainStaminaAmount = 1;
+
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float verticalVelocity = 0;
 
+	private float stamina;
 	private int snowballs = 10;
 	private float timeLastThrownSnowball;
 	private float timeGettingSnowballs;
@@ -60,12 +69,13 @@ public class PlayerController : MonoBehaviour {
 	private bool isCrouched = false;
 	private bool isGettingSnowballs = false;
 
-	private float forwardDirection;
+	private int forwardDirection;
 	private float forwardBackward;
 	private float sideToSide;
-	private float sideToSideDirection;
+	private int sideToSideDirection;
 	private Vector3 jumpVector;
 	private Quaternion jumpRotation;
+	private float stayGroundedVelocity = -0.1f;
 
 	void Start() {
 		Cursor.visible = false;
@@ -73,11 +83,14 @@ public class PlayerController : MonoBehaviour {
 		characterController = GetComponent<CharacterController>();
 		movementVector = new Vector3();
 
+		stamina = maxStamina;
+
 		resizeSnowballPanel();
 		displaySnowballs();
 	}
 
 	void Update() {
+		gainStamina();
 		movement();
 
 		if(snowballs > 0 && !isGettingSnowballs && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
@@ -103,8 +116,12 @@ public class PlayerController : MonoBehaviour {
 		verticalMovement();
 		
 		if (!isGettingSnowballs && characterController.isGrounded) {
-			forwardBackwardMovement();
-			strafe();
+			sprint();
+
+			if (stamina > minStamina) {
+				forwardBackwardMovement();
+				strafe();
+			}
 		}
 
 		if (characterController.isGrounded) {
@@ -137,8 +154,8 @@ public class PlayerController : MonoBehaviour {
 		else {
 			jumpRotation = transform.rotation;
 			verticalVelocity = 0;
-			jumpVector.y = -0.1f;
-			movementVector.y = -0.1f;
+			jumpVector.y = stayGroundedVelocity;
+			movementVector.y = stayGroundedVelocity;
 		}
 
 	}
@@ -152,28 +169,20 @@ public class PlayerController : MonoBehaviour {
 		sideToSide = Input.GetAxis("Horizontal") * strafeSpeed();
 
 		// -1/1 or 0 depending on if moving
-		sideToSideDirection = Mathf.Abs(sideToSide) > 0 ? sideToSide / Mathf.Abs(sideToSide) : 0;
+		sideToSideDirection = Mathf.Abs(sideToSide) > 0 ? (int)(sideToSide / Mathf.Abs(sideToSide)) : 0;
+
+		if(sideToSideDirection > 0) {
+			useStamina(walkStaminaAmount);
+		}
 
 		movementVector.x = sideToSide;
 	}
 
-	private void forwardBackwardMovement() {
-		forwardBackward = Input.GetAxis("Vertical");
-		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
-
-		// -1/1 or 0 depending on if moving
-		forwardDirection = Mathf.Abs(forwardBackward) > 0 ? forwardBackward / Mathf.Abs(forwardBackward) : 0;
-
-		movementVector.z = forwardBackward;
-	}
-
-	private float forwardSpeed() {
-		if(isCrouched) {
-			return crouchForwardSpeed;
-		}
-
+	private void sprint() {
 		if(Input.GetButton("Sprint")) {
 			isSprinting = true;
+
+			useStamina(sprintStaminaAmount);
 
 			sprintGO.SetActive(true);
 			standGO.SetActive(false);
@@ -183,22 +192,51 @@ public class PlayerController : MonoBehaviour {
 				standHeldSnowballGO.SetActive(false);
 				sprintHeldSnowballGO.SetActive(true);
 			}
+		}
+		else {
+			// Keep snowball held
+			if (sprintHeldSnowballGO.activeSelf) {
+				sprintHeldSnowballGO.SetActive(false);
+				standHeldSnowballGO.SetActive(true);
+			}
 
+			isSprinting = false;
+
+			if(isCrouched) {
+				crouchGO.SetActive(true);
+			}
+			else {
+				standGO.SetActive(true);
+			}
+
+			sprintGO.SetActive(false);
+		}
+	}
+
+	private void forwardBackwardMovement() {
+		forwardBackward = Input.GetAxis("Vertical");
+		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
+
+		// -1/1 or 0 depending on if moving
+		forwardDirection = Mathf.Abs(forwardBackward) > 0 ? (int)(forwardBackward / Mathf.Abs(forwardBackward)) : 0;
+
+		if(forwardDirection > 0) {
+			useStamina(walkStaminaAmount);
+		}
+
+		movementVector.z = forwardBackward;
+	}
+
+	private float forwardSpeed() {
+		if(isCrouched) {
+			return crouchForwardSpeed;
+		}
+		else if (isSprinting) {
 			return sprintForwardSpeed;
 		}
-
-		// Keep snowball held
-		if (sprintHeldSnowballGO.activeSelf) {
-			sprintHeldSnowballGO.SetActive(false);
-			standHeldSnowballGO.SetActive(true);
+		else {
+			return normalForwardSpeed;
 		}
-
-		isSprinting = false;
-
-		standGO.SetActive(true);
-		sprintGO.SetActive(false);
-
-		return normalForwardSpeed;
 	}
 
 	private float backwardSpeed() {
@@ -207,6 +245,30 @@ public class PlayerController : MonoBehaviour {
 
 	private float strafeSpeed() {
 		return isCrouched ? crouchStrafeSpeed : normalStrafeSpeed;
+	}
+
+	private void gainStamina() {
+		bool isNotMoving = Mathf.Approximately(Input.GetAxisRaw("Horizontal"), 0) && Mathf.Approximately(Input.GetAxisRaw("Vertical"), 0);
+		if (stamina < maxStamina && characterController.isGrounded && isNotMoving) {
+			stamina += gainStaminaAmount * Time.deltaTime;
+			displayStamina();
+		}
+	}
+
+	private void useStamina(float amount) {
+		stamina -= amount * Time.deltaTime;
+
+		if(stamina < 0) {
+			stamina = 0;
+		}
+
+		displayStamina();
+	}
+
+	private void displayStamina() {
+		RectTransform rt = staminaPanelGO.GetComponent<RectTransform>();
+		rt.sizeDelta = new Vector2(stamina * 3, rt.sizeDelta.y);
+		rt.anchoredPosition = new Vector2(stamina * 3 / -2, 0);
 	}
 
 	/*****************************
