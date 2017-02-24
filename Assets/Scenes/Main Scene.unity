@@ -696,7 +696,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &861806372
 Transform:
   m_ObjectHideFlags: 0
@@ -2479,14 +2479,17 @@ MonoBehaviour:
   mouseSensitivity: 3.5
   throwForce: 50
   throwAngleDefault: 2
-  secondsToThrowSnowball: 0.5
+  secondsToThrowSnowball: 0.3
   secondsToMakeSnowball: 0.75
   maxSnowballs: 10
   maxStamina: 100
   minStamina: 0
   walkStaminaAmount: 1
   sprintStaminaAmount: 15
-  gainStaminaAmount: 30
+  makeSnowballStaminaAmount: 10
+  jumpStaminaAmount: 20
+  throwStaminaAmount: 10
+  gainStaminaAmount: 10
 --- !u!1 &2093656276
 GameObject:
   m_ObjectHideFlags: 0
