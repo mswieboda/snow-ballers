@@ -58,6 +58,10 @@ public class PlayerController : MonoBehaviour {
 	private float standingY;
 
 	private float forwardDirection;
+	private float forwardBackward;
+	private float sideToSide;
+	private Vector3 jumpVector;
+	private Quaternion jumpRotation;
 
 	void Start() {
 		Cursor.visible = false;
@@ -124,36 +128,46 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void movement() {
+		mouseLook();
 		verticalMovement();
-
-		if (!isGettingSnowball) {
+		
+		if (!isGettingSnowball && characterController.isGrounded) {
 			forwardBackwardMovement();
 			strafe();
 		}
 
-		mouseLook();
-
 		crouch();
 		standUp();
 
-		if(characterController.enabled) {
-			// Apply rotation to vector
+		if (characterController.isGrounded) {
 			movementVector = transform.rotation * movementVector * Time.deltaTime;
 			characterController.Move(movementVector);
+		}
+		else {
+			jumpVector = jumpRotation * jumpVector * Time.deltaTime;
+			characterController.Move(jumpVector);
+		
 		}
 	}
 
 	private void verticalMovement() {
 		if(!characterController.isGrounded) {
 			verticalVelocity += Physics.gravity.y * Time.deltaTime;
-			movementVector.y = verticalVelocity;
+			jumpVector.y = verticalVelocity;
+			jumpVector.z = forwardBackward;
+			jumpVector.x = sideToSide;
 		}
 		else if(characterController.isGrounded && Input.GetButtonDown("Jump")) {
+			jumpVector.x = sideToSide;
+			jumpVector.z = forwardBackward;
+			jumpRotation = transform.rotation;
+			Debug.Log(jumpVector);
 			verticalVelocity = 10;
 			movementVector.y = verticalVelocity;
 		}
 		else {
 			verticalVelocity = 0;
+			jumpVector.y = -0.1f;
 			movementVector.y = -0.1f;
 		}
 	}
@@ -164,12 +178,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void strafe() {
-		movementVector.x = Input.GetAxis ("Horizontal") * strafeSpeed();
+		sideToSide = Input.GetAxis ("Horizontal") * strafeSpeed();
+		movementVector.x = sideToSide;
 	}
 
 	private void forwardBackwardMovement() {
-		float forwardBackward = Input.GetAxis ("Vertical");
-
+		
+		forwardBackward = Input.GetAxis ("Vertical");
 		forwardBackward *= forwardBackward >= 0 ? forwardSpeed() : backwardSpeed();
 
 		// -1/1 or 0 depending on if moving
