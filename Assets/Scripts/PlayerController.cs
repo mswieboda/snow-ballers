@@ -4,18 +4,19 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
-	public GameObject armObject;
+	public GameObject standingBody;
 	public GameObject heldSnowballObject;
 
-	public GameObject crouchObject;
-	public GameObject crouchArmObject;
+	public GameObject crouchBody;
 	public GameObject crouchHeldSnowballObject;
 
 	public GameObject snowballPrefab;
 	public GameObject snowballPanel;
 	public GameObject snowballIconPrefab;
+
 	public Camera MainCamera;
 	public Camera OTSCamera;
+	public Camera crouchOTSCamera;
 	public GameObject reticle;
 
 	public float normalForwardSpeed = 10;
@@ -24,17 +25,11 @@ public class PlayerController : MonoBehaviour {
 	public float crouchBackwardSpeed = 2;
 	public float normalStrafeSpeed = 15;
 	public float crouchStrafeSpeed = 2;
-
-	public float secondsToMakeSnowball = 0.5f;
-	public bool crouchPerSnowballControl = false;
-	public float crouchAnimationSpeed = 10;
-	public float crouchYTarget = 0.025f;
-
 	public float mouseSensitivity = 5;
-
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
 	public float secondsToThrowSnowball = 0.3f;
+	public float secondsToMakeSnowball = 0.5f;
 	public int maxSnowballs = 5;
 
 	private CharacterController characterController;
@@ -46,16 +41,10 @@ public class PlayerController : MonoBehaviour {
 	private int snowballs = 10;
 	private float timeLastThrownSnowball;
 
-	// These represent the action of crouching/standing
-	// not if they are in the crouched or standing position
-	private bool isCrouching = false;
-	private bool isStanding = true;
 	private bool isGettingSnowball = false;
-	private float timeCrouchPressed;
+	private float timeGettingSnowballs;
 
-	// Represents if they are crouched (true) or standing (false)
 	private bool isCrouched = false;
-	private float standingY;
 
 	private float forwardDirection;
 	private float forwardBackward;
@@ -68,65 +57,32 @@ public class PlayerController : MonoBehaviour {
 
 		characterController = GetComponent<CharacterController>();
 		movementVector = new Vector3();
-		standingY = transform.position.y;
 
+		resizeSnowballPanel();
 		displaySnowballs();
 	}
 
 	void Update() {
 		movement();
 
-		if (snowballs > 0 && !isGettingSnowball && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
-			if (Input.GetButtonDown("Fire1")) {
+		if(snowballs > 0 && !isGettingSnowball && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
+			if(Input.GetButtonDown("Throw")) {
 				holdSnowball();
 			}
 
-			if (Input.GetButtonUp("Fire1")) {
+			if(Input.GetButtonUp("Throw")) {
 				throwSnowball();
 			}	
 		}
-
-		if (crouchPerSnowballControl) {
-			if (Input.GetButtonDown("Fire3")) {
-				getSnowball();
-			}
-
-			if (Input.GetButtonDown("Fire2")) {
-				toggleCrouch();
-			}
-		}
-		else {
-			if (Input.GetButtonDown("Fire3")) {
-				timeCrouchPressed = Time.time;
-
-				getSnowball();
-			}
-
-			if (Input.GetButtonUp("Fire3")) {
-				timeCrouchPressed = 0;
-
-				isGettingSnowball = false;
-				isCrouching = false;
-				isStanding = true;
-			}
-
-			// TODO: Disabling for now as it's not compatible with
-			//       CharacterController and moving halfway in Plane
-			 if (Input.GetButtonDown("Fire4")) {
-				toggleCrouch();
-			 }
-
-			if(Input.GetButton("Fire2")){
-				showOTSCamera();
-			}
-			else {
-				showMainCamera();
-			}
-		}
 			
-
+		getSnowballs();
+		crouch();
+		showCamera();
 	}
 
+	/*****************************
+	 * Movement
+     *****************************/
 	private void movement() {
 		mouseLook();
 		verticalMovement();
@@ -135,9 +91,6 @@ public class PlayerController : MonoBehaviour {
 			forwardBackwardMovement();
 			strafe();
 		}
-
-		crouch();
-		standUp();
 
 		if (characterController.isGrounded) {
 			movementVector = transform.rotation * movementVector * Time.deltaTime;
@@ -193,66 +146,21 @@ public class PlayerController : MonoBehaviour {
 		movementVector.z = forwardBackward;
 	}
 
-	private void crouch() {
-		if (!isCrouching) {
-			return;
-		}
-
-		characterController.enabled = false;
-
-		Vector3 crouchPosition = new Vector3(transform.position.x, crouchYTarget, transform.position.z);
-
-		if (transform.position.y - crouchYTarget <= 0.02f) {
-			if(isGettingSnowball) {
-				if (crouchPerSnowballControl) {
-					isGettingSnowball = false;
-					isCrouching = false;
-					isCrouched = true;
-					isStanding = true;
-
-					addSnowball();
-				}
-				else {
-					isCrouched = true;
-
-					if (Time.time - timeCrouchPressed > secondsToMakeSnowball) {
-						timeCrouchPressed = Time.time;
-						addSnowball();
-					}
-				}
-			}
-			else {
-				isCrouching = false;
-				isCrouched = true;
-			}
-
-			transform.position = crouchPosition;
-		}
-		else {
-			transform.position = Vector3.Lerp(transform.position, crouchPosition, crouchAnimationSpeed * Time.deltaTime);
-		}
+	private float forwardSpeed() {
+		return isCrouched ? crouchForwardSpeed : normalForwardSpeed;
 	}
 
-	private void standUp() {
-		if (!isStanding) {
-			return;
-		}
-
-		Vector3 standingPosition = new Vector3(transform.position.x, standingY, transform.position.z);
-
-		if (standingY - transform.position.y <= 0.02f) {
-			isStanding = false;
-			isCrouched = false;
-
-			transform.position = standingPosition;
-
-			characterController.enabled = true;
-		}
-		else {
-			transform.position = Vector3.Lerp(transform.position, standingPosition, crouchAnimationSpeed * Time.deltaTime);
-		}
+	private float backwardSpeed() {
+		return isCrouched ? crouchBackwardSpeed : normalBackwardSpeed;
 	}
 
+	private float strafeSpeed() {
+		return isCrouched ? crouchStrafeSpeed : normalStrafeSpeed;
+	}
+
+	/*****************************
+	 * Throw Snowballs
+     *****************************/
 	private void holdSnowball() {
 		GameObject heldSnowball = isCrouched ? crouchHeldSnowballObject : heldSnowballObject;
 		heldSnowball.SetActive(true);
@@ -311,32 +219,59 @@ public class PlayerController : MonoBehaviour {
 		rb.AddForce (force, ForceMode.Impulse);
 	}
 
-	private float forwardSpeed() {
-		return isCrouched ? crouchForwardSpeed : normalForwardSpeed;
+	/*****************************
+	 * Get Snowballs
+     *****************************/
+	private void getSnowballs() {
+		if(Input.GetButton("Reload")) {
+			makeSnowballs();
+		}
+		else {
+			stopMakingSnowballs();
+		}
 	}
 
-	private float backwardSpeed() {
-		return isCrouched ? crouchBackwardSpeed : normalBackwardSpeed;
+	private void makeSnowballs() {
+		if (snowballs >= maxSnowballs) {
+			return;
+		}
+
+		if (timeGettingSnowballs < 0) {
+			timeGettingSnowballs = Time.time;
+		}
+
+		if (Time.time - timeGettingSnowballs > secondsToMakeSnowball) {
+			timeGettingSnowballs = Time.time;
+			addSnowball();
+		}
+
+		isGettingSnowball = true;
 	}
 
-	private float strafeSpeed() {
-		return isCrouched ? crouchStrafeSpeed : normalStrafeSpeed;
+	private void stopMakingSnowballs() {
+		timeGettingSnowballs = -1;
+
+		isGettingSnowball = false;
+	}
+
+	/*****************************
+	 * Crouch
+     *****************************/
+	private void crouch() {
+		if(!isGettingSnowball && Input.GetButtonDown("Crouch")) {
+			toggleCrouch();
+		}
 	}
 
 	private void toggleCrouch() {
-		if (isGettingSnowball || isStanding || isCrouching) {
+		if (isGettingSnowball) {
 			return;
 		}
 
 		isCrouched = !isCrouched;
 
-		MeshRenderer renderer = GetComponent<MeshRenderer>();
-
-		renderer.enabled = !isCrouched;
-		armObject.SetActive(!isCrouched);
-
-		crouchObject.SetActive(isCrouched);
-		crouchArmObject.SetActive(isCrouched);
+		standingBody.SetActive(!isCrouched);
+		crouchBody.SetActive(isCrouched);
 
 		// If we were holding a snowball, keep holding it after toggle
 		if (isCrouched && heldSnowballObject.activeSelf) {
@@ -349,13 +284,56 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 
-	private void getSnowball() {
-		if (snowballs >= maxSnowballs || isGettingSnowball) {
-			return;
+	/*****************************
+	 * Show Camera
+     *****************************/
+	private void showCamera() {
+		if(!isGettingSnowball && Input.GetButton("Aim")){
+			showOTSCamera();
+		}
+		else {
+			showMainCamera();
+		}
+	}
+
+	private void showMainCamera() {
+		MainCamera.enabled = true;
+
+		OTSCamera.enabled = false;
+		crouchOTSCamera.enabled = false;
+		reticle.SetActive(false);
+	}
+
+	private void showOTSCamera() {
+		if(isCrouched) {
+			crouchOTSCamera.enabled = true;
+		}
+		else {
+			OTSCamera.enabled = true;
 		}
 
-		isCrouching = true;
-		isGettingSnowball = true;
+		reticle.SetActive(true);
+
+		MainCamera.enabled = false;
+	}
+
+	/*****************************
+	 * Snowball Panel
+	 * Display Snowballs
+	 * Add/Remove Snowballs
+     *****************************/
+	private int snowballPanelMarginX = 15;
+	private int snowballPanelMarginY = 10;
+	private int snowballIconMargin = 1;
+
+	private void resizeSnowballPanel() {
+		float snowballIconWidth = snowballIconPrefab.GetComponent<RectTransform>().rect.width;
+		float snowballIconHeight = snowballIconPrefab.GetComponent<RectTransform>().rect.width;
+		RectTransform rt = snowballPanel.GetComponent<RectTransform>();
+		float width = snowballPanelMarginX * 2 + (maxSnowballs - 1) * snowballIconWidth + (maxSnowballs - 1) * snowballIconMargin;
+		float height = snowballPanelMarginY * 2 + snowballIconHeight;
+		rt.sizeDelta = new Vector2(width, height);
+		rt.anchoredPosition3D = new Vector3(width / 2, -height / 2, 0);
 	}
 
 	private void displaySnowballs() {
@@ -364,13 +342,14 @@ public class PlayerController : MonoBehaviour {
 			Destroy(child.gameObject);
 		}
 
+
 		// Creates a snowball icon for each snowball
 		for (int i = 0; i < snowballs; i++) {
 			GameObject icon = (GameObject)Instantiate(snowballIconPrefab);
 			icon.transform.SetParent(snowballPanel.transform);
 			icon.transform.localPosition = new Vector3(0, 0, 0);
 			RectTransform rt = icon.GetComponent<RectTransform>();
-			rt.anchoredPosition3D = new Vector3(10 + i * rt.rect.width + i * 1, 0, 0);
+			rt.anchoredPosition3D = new Vector3(snowballPanelMarginX + i * rt.rect.width + i * snowballIconMargin, 0, 0);
 		}
 	}
 
@@ -390,17 +369,5 @@ public class PlayerController : MonoBehaviour {
 
 		snowballs--;
 		displaySnowballs();
-	}
-
-	public void showMainCamera() {
-		MainCamera.enabled = true;
-		OTSCamera.enabled = false;
-		reticle.SetActive(false);
-	}
-
-	public void showOTSCamera() {
-		OTSCamera.enabled = true;
-		MainCamera.enabled = false;
-		reticle.SetActive(true);
 	}
 }
