@@ -4,51 +4,61 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour {
-	public GameObject standingBody;
-	public GameObject heldSnowballObject;
+	public Camera mainCamera;
+	public GameObject reticleGO;
 
-	public GameObject crouchBody;
-	public GameObject crouchHeldSnowballObject;
+	public GameObject standGO;
+	public GameObject standHeldSnowballGO;
+	public Camera standOTSCamera;
 
-	public GameObject gettingSnowballsBody;
+	public GameObject crouchGO;
+	public GameObject crouchHeldSnowballGO;
+	public Camera crouchOTSCamera;
+
+	public GameObject sprintGO;
+	public GameObject sprintHeldSnowballGO;
+	public Camera sprintOTSCamera;
+
+	public GameObject getSnowballsGO;
 
 	public GameObject snowballPrefab;
-	public GameObject snowballPanel;
+	public GameObject snowballPanelGO;
 	public GameObject snowballIconPrefab;
 
-	public Camera MainCamera;
-	public Camera OTSCamera;
-	public Camera crouchOTSCamera;
-	public GameObject reticle;
-
 	public float normalForwardSpeed = 10;
-	public float normalBackwardSpeed = 7;
 	public float crouchForwardSpeed = 5;
+	public float sprintForwardSpeed = 15;
+
+	public float normalBackwardSpeed = 7;
 	public float crouchBackwardSpeed = 2;
+
 	public float normalStrafeSpeed = 15;
 	public float crouchStrafeSpeed = 2;
+
 	public float jumpSpeed = 5;
 	public float airDragSpeed = -5f;
+
 	public float mouseSensitivity = 5;
+
 	public float throwForce = 50;
 	public float throwAngleDefault = 3;
+
 	public float secondsToThrowSnowball = 0.3f;
 	public float secondsToMakeSnowball = 0.5f;
+
 	public int maxSnowballs = 5;
 
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float verticalVelocity = 0;
 
-	// TODO: Make a snowball arsenal with
-	//       different kinds of snowballs (iceballs, etc)
 	private int snowballs = 10;
 	private float timeLastThrownSnowball;
-
-	private bool isGettingSnowballs = false;
 	private float timeGettingSnowballs;
 
+	private bool isSprinting = false;
 	private bool isCrouched = false;
+	private bool isGettingSnowballs = false;
 
 	private float forwardDirection;
 	private float forwardBackward;
@@ -158,7 +168,37 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private float forwardSpeed() {
-		return isCrouched ? crouchForwardSpeed : normalForwardSpeed;
+		if(isCrouched) {
+			return crouchForwardSpeed;
+		}
+
+		if(Input.GetButton("Sprint")) {
+			isSprinting = true;
+
+			sprintGO.SetActive(true);
+			standGO.SetActive(false);
+
+			// Keep snowball held
+			if (standHeldSnowballGO.activeSelf) {
+				standHeldSnowballGO.SetActive(false);
+				sprintHeldSnowballGO.SetActive(true);
+			}
+
+			return sprintForwardSpeed;
+		}
+
+		// Keep snowball held
+		if (sprintHeldSnowballGO.activeSelf) {
+			sprintHeldSnowballGO.SetActive(false);
+			standHeldSnowballGO.SetActive(true);
+		}
+
+		isSprinting = false;
+
+		standGO.SetActive(true);
+		sprintGO.SetActive(false);
+
+		return normalForwardSpeed;
 	}
 
 	private float backwardSpeed() {
@@ -172,13 +212,25 @@ public class PlayerController : MonoBehaviour {
 	/*****************************
 	 * Throw Snowballs
      *****************************/
+	private GameObject determineHeldSnowballGO() {
+		if(isCrouched) {
+			return crouchHeldSnowballGO;
+		}
+		else if(isSprinting) {
+			return sprintHeldSnowballGO;
+		}
+		else {
+			return standHeldSnowballGO;
+		}
+	}
+
 	private void holdSnowball() {
-		GameObject heldSnowball = isCrouched ? crouchHeldSnowballObject : heldSnowballObject;
+		GameObject heldSnowball = determineHeldSnowballGO();
 		heldSnowball.SetActive(true);
 	}
 
 	private void throwSnowball() {
-		GameObject heldSnowball = isCrouched ? crouchHeldSnowballObject : heldSnowballObject;
+		GameObject heldSnowball = determineHeldSnowballGO();
 
 		// If we're not holding the "fake" held snowball, don't (create) throw one
 		if (heldSnowball.activeSelf == false) {
@@ -250,9 +302,9 @@ public class PlayerController : MonoBehaviour {
 		if (!isGettingSnowballs) {
 			timeGettingSnowballs = Time.time;
 
-			standingBody.SetActive(false);
-			crouchBody.SetActive(false);
-			gettingSnowballsBody.SetActive(true);
+			standGO.SetActive(false);
+			crouchGO.SetActive(false);
+			getSnowballsGO.SetActive(true);
 		}
 
 		if (Time.time - timeGettingSnowballs > secondsToMakeSnowball) {
@@ -264,16 +316,20 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void stopMakingSnowballs() {
+		if(!isGettingSnowballs) {
+			return;
+		}
+
 		timeGettingSnowballs = 0;
 
 		if(isCrouched) {
-			crouchBody.SetActive(true);
+			crouchGO.SetActive(true);
 		}
 		else {
-			standingBody.SetActive(true);
+			standGO.SetActive(true);
 		}
 
-		gettingSnowballsBody.SetActive(false);
+		getSnowballsGO.SetActive(false);
 
 		isGettingSnowballs = false;
 	}
@@ -294,17 +350,30 @@ public class PlayerController : MonoBehaviour {
 
 		isCrouched = !isCrouched;
 
-		standingBody.SetActive(!isCrouched);
-		crouchBody.SetActive(isCrouched);
+		standGO.SetActive(!isCrouched);
+		sprintGO.SetActive(!isCrouched);
+		crouchGO.SetActive(isCrouched);
 
 		// If we were holding a snowball, keep holding it after toggle
-		if (isCrouched && heldSnowballObject.activeSelf) {
-			heldSnowballObject.SetActive(false);
-			crouchHeldSnowballObject.SetActive(true);
+		if (isCrouched) {
+			if(standHeldSnowballGO.activeSelf) {
+				standHeldSnowballGO.SetActive(false);
+				crouchHeldSnowballGO.SetActive(true);
+			}
+			else if(sprintHeldSnowballGO.activeSelf) {
+				sprintHeldSnowballGO.SetActive(false);
+				crouchHeldSnowballGO.SetActive(true);
+			}
 		}
-		else if (!isCrouched && crouchHeldSnowballObject.activeSelf) {
-			crouchHeldSnowballObject.SetActive(false);
-			heldSnowballObject.SetActive(true);
+		else if (!isCrouched && crouchHeldSnowballGO.activeSelf) {
+			if(isSprinting) {
+				crouchHeldSnowballGO.SetActive(false);
+				sprintHeldSnowballGO.SetActive(true);
+			}
+			else {
+				crouchHeldSnowballGO.SetActive(false);
+				standHeldSnowballGO.SetActive(true);
+			}
 		}
 	}
 
@@ -321,11 +390,13 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void showMainCamera() {
-		MainCamera.enabled = true;
+		mainCamera.enabled = true;
 
-		OTSCamera.enabled = false;
+		standOTSCamera.enabled = false;
 		crouchOTSCamera.enabled = false;
-		reticle.SetActive(false);
+		sprintOTSCamera.enabled = false;
+
+		reticleGO.SetActive(false);
 	}
 
 	private void showOTSCamera() {
@@ -333,12 +404,17 @@ public class PlayerController : MonoBehaviour {
 			crouchOTSCamera.enabled = true;
 		}
 		else {
-			OTSCamera.enabled = true;
+			if(isSprinting) {
+				sprintOTSCamera.enabled = true;
+			}
+			else {
+				standOTSCamera.enabled = true;
+			}
 		}
 
-		reticle.SetActive(true);
+		reticleGO.SetActive(true);
 
-		MainCamera.enabled = false;
+		mainCamera.enabled = false;
 	}
 
 	/*****************************
@@ -353,7 +429,7 @@ public class PlayerController : MonoBehaviour {
 	private void resizeSnowballPanel() {
 		float snowballIconWidth = snowballIconPrefab.GetComponent<RectTransform>().rect.width;
 		float snowballIconHeight = snowballIconPrefab.GetComponent<RectTransform>().rect.width;
-		RectTransform rt = snowballPanel.GetComponent<RectTransform>();
+		RectTransform rt = snowballPanelGO.GetComponent<RectTransform>();
 		float width = snowballPanelMarginX * 2 + (maxSnowballs - 1) * snowballIconWidth + (maxSnowballs - 1) * snowballIconMargin;
 		float height = snowballPanelMarginY * 2 + snowballIconHeight;
 		rt.sizeDelta = new Vector2(width, height);
@@ -362,7 +438,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void displaySnowballs() {
 		// Deletes all snowball icons
-		foreach (Transform child in snowballPanel.transform) {
+		foreach (Transform child in snowballPanelGO.transform) {
 			Destroy(child.gameObject);
 		}
 
@@ -370,7 +446,7 @@ public class PlayerController : MonoBehaviour {
 		// Creates a snowball icon for each snowball
 		for (int i = 0; i < snowballs; i++) {
 			GameObject icon = (GameObject)Instantiate(snowballIconPrefab);
-			icon.transform.SetParent(snowballPanel.transform);
+			icon.transform.SetParent(snowballPanelGO.transform);
 			icon.transform.localPosition = new Vector3(0, 0, 0);
 			RectTransform rt = icon.GetComponent<RectTransform>();
 			rt.anchoredPosition3D = new Vector3(snowballPanelMarginX + i * rt.rect.width + i * snowballIconMargin, 0, 0);
