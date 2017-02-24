@@ -1989,6 +1989,7 @@ MonoBehaviour:
   heldSnowballObject: {fileID: 1447800715}
   crouchBody: {fileID: 1377805261}
   crouchHeldSnowballObject: {fileID: 1317110189}
+  gettingSnowballsBody: {fileID: 1386403547}
   snowballPrefab: {fileID: 1253543266971890, guid: ebb0c4a7f4bd93f44b8d28c4e0025421,
     type: 2}
   snowballPanel: {fileID: 1389578237}

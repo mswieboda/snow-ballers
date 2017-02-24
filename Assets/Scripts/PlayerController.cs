@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour {
 	public GameObject crouchBody;
 	public GameObject crouchHeldSnowballObject;
 
+	public GameObject gettingSnowballsBody;
+
 	public GameObject snowballPrefab;
 	public GameObject snowballPanel;
 	public GameObject snowballIconPrefab;
@@ -41,7 +43,7 @@ public class PlayerController : MonoBehaviour {
 	private int snowballs = 10;
 	private float timeLastThrownSnowball;
 
-	private bool isGettingSnowball = false;
+	private bool isGettingSnowballs = false;
 	private float timeGettingSnowballs;
 
 	private bool isCrouched = false;
@@ -65,7 +67,7 @@ public class PlayerController : MonoBehaviour {
 	void Update() {
 		movement();
 
-		if(snowballs > 0 && !isGettingSnowball && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
+		if(snowballs > 0 && !isGettingSnowballs && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
 			if(Input.GetButtonDown("Throw")) {
 				holdSnowball();
 			}
@@ -87,7 +89,7 @@ public class PlayerController : MonoBehaviour {
 		mouseLook();
 		verticalMovement();
 		
-		if (!isGettingSnowball && characterController.isGrounded) {
+		if (!isGettingSnowballs && characterController.isGrounded) {
 			forwardBackwardMovement();
 			strafe();
 		}
@@ -223,7 +225,7 @@ public class PlayerController : MonoBehaviour {
 	 * Get Snowballs
      *****************************/
 	private void getSnowballs() {
-		if(Input.GetButton("Reload")) {
+		if(snowballs < maxSnowballs && Input.GetButton("Reload")) {
 			makeSnowballs();
 		}
 		else {
@@ -236,8 +238,12 @@ public class PlayerController : MonoBehaviour {
 			return;
 		}
 
-		if (timeGettingSnowballs < 0) {
+		if (!isGettingSnowballs) {
 			timeGettingSnowballs = Time.time;
+
+			standingBody.SetActive(false);
+			crouchBody.SetActive(false);
+			gettingSnowballsBody.SetActive(true);
 		}
 
 		if (Time.time - timeGettingSnowballs > secondsToMakeSnowball) {
@@ -245,26 +251,35 @@ public class PlayerController : MonoBehaviour {
 			addSnowball();
 		}
 
-		isGettingSnowball = true;
+		isGettingSnowballs = true;
 	}
 
 	private void stopMakingSnowballs() {
-		timeGettingSnowballs = -1;
+		timeGettingSnowballs = 0;
 
-		isGettingSnowball = false;
+		if(isCrouched) {
+			crouchBody.SetActive(true);
+		}
+		else {
+			standingBody.SetActive(true);
+		}
+
+		gettingSnowballsBody.SetActive(false);
+
+		isGettingSnowballs = false;
 	}
 
 	/*****************************
 	 * Crouch
      *****************************/
 	private void crouch() {
-		if(!isGettingSnowball && Input.GetButtonDown("Crouch")) {
+		if(!isGettingSnowballs && Input.GetButtonDown("Crouch")) {
 			toggleCrouch();
 		}
 	}
 
 	private void toggleCrouch() {
-		if (isGettingSnowball) {
+		if (isGettingSnowballs) {
 			return;
 		}
 
@@ -288,7 +303,7 @@ public class PlayerController : MonoBehaviour {
 	 * Show Camera
      *****************************/
 	private void showCamera() {
-		if(!isGettingSnowball && Input.GetButton("Aim")){
+		if(!isGettingSnowballs && Input.GetButton("Aim")){
 			showOTSCamera();
 		}
 		else {
