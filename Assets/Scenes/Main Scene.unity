@@ -2546,7 +2546,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2.1
   m_Radius: 0.5
-  m_SlopeLimit: 45
+  m_SlopeLimit: 60
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -2610,17 +2610,17 @@ MonoBehaviour:
   airDragSpeed: -0.97
   mouseSensitivity: 3.5
   throwForce: 50
-  throwAngleDefault: 2
+  throwAngleDefault: 3
   secondsToThrowSnowball: 0.3
-  secondsToMakeSnowball: 0.75
+  secondsToMakeSnowball: 0.5
   maxSnowballs: 10
   maxStamina: 100
   minStamina: 0
   walkStaminaAmount: 1
   sprintStaminaAmount: 15
-  makeSnowballStaminaAmount: 10
-  jumpStaminaAmount: 20
-  throwStaminaAmount: 10
+  makeSnowballStaminaAmount: 7.5
+  jumpStaminaAmount: 15
+  throwStaminaAmount: 5
   gainStaminaAmount: 10
 --- !u!1001 &2141004248
 Prefab:
