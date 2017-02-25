@@ -172,4 +172,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c94cf9f874c49aeadde2eb693b407c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSplats: 100
+  maxSplats: 500
