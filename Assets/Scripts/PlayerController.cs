@@ -68,6 +68,7 @@ public class PlayerController : MonoBehaviour {
 	private float timeLastThrownSnowball;
 	private float timeGettingSnowballs;
 
+	private bool isAiming = false;
 	private bool isSprinting = false;
 	private bool isCrouched = false;
 	private bool isGettingSnowballs = false;
@@ -93,8 +94,6 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void Update() {
-		gainStamina();
-
 		movement();
 
 		throwActions();
@@ -102,6 +101,8 @@ public class PlayerController : MonoBehaviour {
 		getSnowballs();
 
 		crouch();
+
+		gainStamina();
 
 		showCamera();
 	}
@@ -160,8 +161,17 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void mouseLook() {
-		float mouseRotation = Input.GetAxis("Mouse X") * mouseSensitivity;
-		transform.Rotate(0, mouseRotation, 0);
+		float mouseRotationX = 0;
+		float mouseRotationY = Input.GetAxis("Mouse X") * mouseSensitivity;
+
+		if(isAiming) {
+			mouseRotationX = Input.GetAxis("Mouse Y") * mouseSensitivity;
+		}
+		else {
+			transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
+		}
+
+		transform.Rotate(-mouseRotationX, mouseRotationY, 0);
 	}
 
 	private void strafe() {
@@ -483,6 +493,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void showMainCamera() {
+		isAiming = false;
+
 		mainCamera.enabled = true;
 
 		standOTSCamera.enabled = false;
@@ -493,6 +505,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void showOTSCamera() {
+		isAiming = true;
+
 		if(isCrouched) {
 			crouchOTSCamera.enabled = true;
 		}
