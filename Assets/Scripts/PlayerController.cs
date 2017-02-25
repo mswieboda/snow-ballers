@@ -144,7 +144,7 @@ public class PlayerController : MonoBehaviour {
 			forwardBackward += forwardBackward * airDragSpeed * Time.deltaTime;
 			sideToSide += sideToSideDirection * airDragSpeed * Time.deltaTime;
 		}
-		else if(characterController.isGrounded && hasStamina() && Input.GetButtonDown("Jump")) {
+		else if(characterController.isGrounded && hasStamina() && Input.GetButton("Jump")) {
 			jumpRotation = transform.rotation;
 			verticalVelocity = jumpSpeed;
 			movementVector.y = verticalVelocity;
