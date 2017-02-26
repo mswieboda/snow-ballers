@@ -2614,6 +2614,7 @@ MonoBehaviour:
   secondsToThrowSnowball: 0.3
   secondsToMakeSnowball: 0.5
   maxSnowballs: 10
+  enableStamina: 1
   maxStamina: 100
   minStamina: 0
   walkStaminaAmount: 1

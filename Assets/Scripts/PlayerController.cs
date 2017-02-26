@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour {
 
 	public int maxSnowballs = 5;
 
+	public bool enableStamina = true;
 	public float maxStamina = 100;
 	public float minStamina = 5;
 	public float walkStaminaAmount = 1;
@@ -263,10 +264,18 @@ public class PlayerController : MonoBehaviour {
 	 * Stamina
      *****************************/
 	private bool hasStamina() {
+		if (!enableStamina) {
+			return true;
+		}
+
 		return stamina > minStamina;
 	}
 
 	private void gainStamina() {
+		if (!enableStamina) {
+			return;
+		}
+
 		bool isNotMoving = Mathf.Approximately(Input.GetAxisRaw("Horizontal"), 0) && Mathf.Approximately(Input.GetAxisRaw("Vertical"), 0);
 		if (stamina < maxStamina && characterController.isGrounded && isNotMoving && !isGettingSnowballs) {
 			stamina += gainStaminaAmount * Time.deltaTime;
@@ -275,6 +284,10 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void useStamina(float amount) {
+		if (!enableStamina) {
+			return;
+		}
+
 		stamina -= amount * Time.deltaTime;
 
 		if(stamina < 0) {
@@ -285,6 +298,10 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void displayStamina() {
+		if (!enableStamina) {
+			return;
+		}
+
 		RectTransform rt = staminaPanelGO.GetComponent<RectTransform>();
 		rt.sizeDelta = new Vector2(stamina * 3, rt.sizeDelta.y);
 		rt.anchoredPosition = new Vector2(stamina * 3 / -2, 0);
