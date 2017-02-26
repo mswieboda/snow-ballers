@@ -145,7 +145,7 @@ public class PlayerController : MonoBehaviour {
 			forwardBackward += forwardBackward * airDragSpeed * Time.deltaTime;
 			sideToSide += sideToSideDirection * airDragSpeed * Time.deltaTime;
 		}
-		else if(characterController.isGrounded && hasStamina() && Input.GetButton("Jump")) {
+		else if(characterController.isGrounded && hasStamina() && Input.GetButtonDown("Jump")) {
 			jumpRotation = transform.rotation;
 			verticalVelocity = jumpSpeed;
 			movementVector.y = verticalVelocity;
@@ -381,7 +381,11 @@ public class PlayerController : MonoBehaviour {
 	 * Get Snowballs
      *****************************/
 	private void getSnowballs() {
-		if(snowballs < maxSnowballs && hasStamina() && Input.GetButton("Reload")) {
+		if (!characterController.isGrounded){
+			stopMakingSnowballs();
+			return;
+		}
+		else if(snowballs < maxSnowballs && hasStamina() && Input.GetButton("Reload")) {
 			makeSnowballs();
 		}
 		else {
