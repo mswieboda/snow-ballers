@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void sprint() {
-		if(Input.GetButton("Sprint")) {
+		if(!isCrouched && Input.GetButton("Sprint")) {
 			isSprinting = true;
 
 			// Are we moving foward?
