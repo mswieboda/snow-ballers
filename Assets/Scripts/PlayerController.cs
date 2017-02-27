@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject snowballIconPrefab;
 
 	public GameObject staminaPanelGO;
+	public GameObject shovelGO;
 
 	public float normalForwardSpeed = 10;
 	public float crouchForwardSpeed = 5;
@@ -81,6 +82,8 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 jumpVector;
 	private Quaternion jumpRotation;
 	private float stayGroundedVelocity = -0.1f;
+	//hasShovel may be temporary. May switch to array or List<>()
+	private bool hasShovel = false;
 
 	void Start() {
 		Cursor.visible = false;
@@ -89,6 +92,7 @@ public class PlayerController : MonoBehaviour {
 		movementVector = new Vector3();
 
 		stamina = maxStamina;
+
 
 		resizeSnowballPanel();
 		displaySnowballs();
@@ -100,6 +104,8 @@ public class PlayerController : MonoBehaviour {
 		throwActions();
 			
 		getSnowballs();
+
+		useItem();
 
 		crouch();
 
@@ -597,5 +603,26 @@ public class PlayerController : MonoBehaviour {
 
 		snowballs--;
 		displaySnowballs();
+	}
+
+	private void OnTriggerEnter(Collider item){
+		
+		if (item.gameObject.CompareTag("Pick Up")) {
+			item.gameObject.SetActive(false);
+			hasShovel = true;
+		}
+
+	}
+
+	private void useItem() {
+		//use a shovel.
+		if (hasShovel && Input.GetButton("Action") && characterController.isGrounded) {
+			shovelGO.SetActive(true);
+
+			Debug.Log(hasShovel);
+		}
+		else {
+			shovelGO.SetActive(false);
+		}
 	}
 }
