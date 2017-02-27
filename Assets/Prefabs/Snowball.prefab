@@ -24,6 +24,8 @@ GameObject:
   - component: {fileID: 23626418506361462}
   - component: {fileID: 54001267108975406}
   - component: {fileID: 114990499804068946}
+  - component: {fileID: 114218105996467578}
+  - component: {fileID: 114666137635567990}
   m_Layer: 0
   m_Name: Snowball
   m_TagString: Snowball
@@ -97,6 +99,58 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &114218105996467578
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1253543266971890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 235
+    i1: 176
+    i2: 196
+    i3: 167
+    i4: 244
+    i5: 189
+    i6: 147
+    i7: 244
+    i8: 75
+    i9: 141
+    i10: 40
+    i11: 196
+    i12: 224
+    i13: 2
+    i14: 84
+    i15: 33
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 0
+--- !u!114 &114666137635567990
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1253543266971890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformSyncMode: 3
+  m_SendInterval: 0.1
+  m_SyncRotationAxis: 7
+  m_RotationSyncCompression: 0
+  m_SyncSpin: 0
+  m_MovementTheshold: 0.001
+  m_SnapThreshold: 5
+  m_InterpolateRotation: 1
+  m_InterpolateMovement: 1
 --- !u!114 &114990499804068946
 MonoBehaviour:
   m_ObjectHideFlags: 1
