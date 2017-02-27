@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
-public class PlayerController : MonoBehaviour {
+public class NetworkedPlayerController : NetworkBehaviour {
 	public Camera mainCamera;
-	private GameObject reticleGO;
 
 	public GameObject standGO;
 	public GameObject standArmGO;
@@ -26,10 +26,13 @@ public class PlayerController : MonoBehaviour {
 	public GameObject getSnowballsArmGO;
 
 	public GameObject snowballPrefab;
-	private GameObject snowballPanelGO;
 	public GameObject snowballIconPrefab;
 
+	private GameObject hudGO;
+	private GameObject reticleGO;
+	private GameObject snowballPanelGO;
 	private GameObject staminaPanelGO;
+
 	public GameObject shovelGO;
 
 	public float normalForwardSpeed = 10;
@@ -90,23 +93,27 @@ public class PlayerController : MonoBehaviour {
 	private bool hasShovel = false;
 
 	void Start() {
+		if (!isLocalPlayer) {
+			return;
+		}
+
 		setupGOs();
 
 		characterController = GetComponent<CharacterController>();
 		movementVector = new Vector3();
 
 		stamina = maxStamina;
-
-
-		resizeSnowballPanel();
-		displaySnowballs();
 	}
 
 	void Update() {
+		if (!isLocalPlayer) {
+			return;
+		}
+
 		movement();
 
 		throwActions();
-			
+
 		getSnowballs();
 
 		useItem();
@@ -119,11 +126,38 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void setupGOs() {
-		// TODO: make a reference to the HUD only then search through children?
-		reticleGO = GameObject.Find("Reticle");
-		reticleGO.SetActive(false);
-		snowballPanelGO = GameObject.Find("Snowball Panel");
-		staminaPanelGO = GameObject.Find("Stamina Panel");
+		hudGO = GameObject.Find("Canvas");
+		reticleGO = hudGO.transform.Find("Reticle").gameObject;
+		snowballPanelGO = hudGO.transform.Find("Snowball Panel").gameObject;
+		staminaPanelGO = hudGO.transform.Find("Stamina Panel Container/Stamina Panel").gameObject;
+	}
+
+	/*****************************
+	 * Networking
+	 *****************************/
+	public override void OnStartLocalPlayer() {
+		GameObject[] gameObjects = new GameObject[] { 
+			standGO, standArmGO,
+			crouchGO, crouchArmGO,
+			sprintGO, sprintArmGO,
+			getSnowballsGO, getSnowballsArmGO
+		};
+
+		// Set meshes to green
+		foreach(GameObject gameObject in gameObjects) {
+			bool isActive = gameObject.activeSelf;
+			gameObject.SetActive(true);
+			gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+			gameObject.SetActive(isActive);
+		}
+
+		// Enable cameras
+		mainCamera.GetComponent<AudioListener>().enabled = true;
+
+		Camera[] cameras = new Camera[] { mainCamera, crouchOTSCamera, sprintOTSCamera };
+		foreach(Camera camera in cameras) {
+			camera.enabled = true;
+		}
 	}
 
 	/*****************************
@@ -132,7 +166,7 @@ public class PlayerController : MonoBehaviour {
 	private void movement() {
 		mouseLook();
 		verticalMovement();
-		
+
 		if (!isGettingSnowballs && characterController.isGrounded) {
 			sprint();
 
@@ -149,7 +183,7 @@ public class PlayerController : MonoBehaviour {
 		else {
 			jumpVector = jumpRotation * jumpVector * Time.deltaTime;
 			characterController.Move(jumpVector);
-		
+
 		}
 	}
 
@@ -357,7 +391,7 @@ public class PlayerController : MonoBehaviour {
 		heldSnowball.SetActive(true);
 	}
 
-	private void throwSnowball() {
+	void throwSnowball() {
 		GameObject heldSnowball = determineHeldSnowballGO();
 
 		// If we're not holding the "fake" held snowball, don't (create) throw one
@@ -377,16 +411,9 @@ public class PlayerController : MonoBehaviour {
 		float throwAngle = throwAngleDefault;
 		Vector3 position, force;
 		Quaternion snowballRotation;
-		GameObject snowball;
-		Rigidbody rb;
 
 		// Get arm position, add scale.y / 2 to get to hand position
 		position = new Vector3(heldSnowball.transform.position.x, heldSnowball.transform.position.y, heldSnowball.transform.position.z);
-
-		// Create a new snow ball
-		snowball = (GameObject) Instantiate(snowballPrefab, position, Quaternion.identity);
-
-		rb = snowball.GetComponent<Rigidbody> ();
 
 		// Get rotation from Player
 		snowballRotation = new Quaternion(
@@ -402,14 +429,30 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		// Add an upwards (negative) throwing angle
-		snowballRotation *= Quaternion.Euler (-throwAngle, 0, 0);
+		snowballRotation *= Quaternion.Euler(-throwAngle, 0, 0);
 
 		// Calculate speed with new rotation, and forward/backward speed
 		forwardForce = forwardDirection * forwardSpeed() + throwForce;
-		force = snowballRotation * new Vector3 (0, 0, forwardForce);
+		force = snowballRotation * new Vector3(0, 0, forwardForce);
+
+		CmdThrowSnowball(position, force);
+	}
+
+	[Command]
+	void CmdThrowSnowball(Vector3 position, Vector3 force) {
+		GameObject snowball;
+		Rigidbody rb;
+
+		// Create a new snow ball
+		snowball = (GameObject) Instantiate(snowballPrefab, position, Quaternion.identity);
+
+		rb = snowball.GetComponent<Rigidbody>();
 
 		// Apply force to snow ball
-		rb.AddForce (force, ForceMode.Impulse);
+		rb.AddForce(force, ForceMode.Impulse);
+
+		// Add it to the network
+		NetworkServer.Spawn(snowball);
 	}
 
 	/*****************************
@@ -523,7 +566,7 @@ public class PlayerController : MonoBehaviour {
 	 * Show Camera
      *****************************/
 	private void showCamera() {
-		if(!isGettingSnowballs && Input.GetButton("Aim")){
+		if(!isGettingSnowballs && Input.GetButton("Aim")) {
 			showOTSCamera();
 		}
 		else {
@@ -618,7 +661,7 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider item){
-		
+
 		if (item.gameObject.CompareTag("Pick Up")) {
 			item.gameObject.SetActive(false);
 			hasShovel = true;
