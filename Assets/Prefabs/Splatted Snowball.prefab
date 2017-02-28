@@ -23,8 +23,6 @@ GameObject:
   - component: {fileID: 23581268598435804}
   - component: {fileID: 82576190469221176}
   - component: {fileID: 114473407563670728}
-  - component: {fileID: 114305648088127190}
-  - component: {fileID: 114307258595980042}
   m_Layer: 0
   m_Name: Splatted Snowball
   m_TagString: Untagged
@@ -163,58 +161,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114305648088127190
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1700296067557450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_SceneId:
-    m_Value: 0
-  m_AssetId:
-    i0: 177
-    i1: 138
-    i2: 173
-    i3: 217
-    i4: 211
-    i5: 135
-    i6: 132
-    i7: 107
-    i8: 218
-    i9: 37
-    i10: 74
-    i11: 102
-    i12: 3
-    i13: 141
-    i14: 229
-    i15: 64
-  m_ServerOnly: 0
-  m_LocalPlayerAuthority: 0
---- !u!114 &114307258595980042
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1700296067557450}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1768714887, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TransformSyncMode: 1
-  m_SendInterval: 0.11111111
-  m_SyncRotationAxis: 7
-  m_RotationSyncCompression: 0
-  m_SyncSpin: 0
-  m_MovementTheshold: 0.001
-  m_SnapThreshold: 5
-  m_InterpolateRotation: 1
-  m_InterpolateMovement: 1
 --- !u!114 &114473407563670728
 MonoBehaviour:
   m_ObjectHideFlags: 1
