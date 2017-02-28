@@ -1340,7 +1340,7 @@ MonoBehaviour:
   jumpSpeed: 7.5
   airDragSpeed: -0.97
   mouseSensitivity: 3.5
-  throwForce: 50
+  throwForce: 35
   throwAngleDefault: 3
   secondsToThrowSnowball: 0.3
   secondsToMakeSnowball: 0.5
