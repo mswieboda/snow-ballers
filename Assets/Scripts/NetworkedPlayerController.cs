@@ -449,7 +449,7 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		rb = snowball.GetComponent<Rigidbody>();
 
 		// Apply force to snow ball
-		rb.AddForce(force, ForceMode.Impulse);
+		rb.velocity = force;
 
 		// Add it to the network
 		NetworkServer.Spawn(snowball);
