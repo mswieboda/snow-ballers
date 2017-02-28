@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class EnemyController : MonoBehaviour {
+public class EnemyController : NetworkBehaviour {
 	public float strafeSpeed = 1f;
 	public float timeToMove = 1.5f;
 
