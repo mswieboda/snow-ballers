@@ -25,8 +25,6 @@ public class SnowballController : NetworkBehaviour {
 		// Attach to collision object
 		splat.transform.SetParent(collision.transform);
 
-		NetworkServer.Spawn(splat);
-
 		destroy();
 	}
 
