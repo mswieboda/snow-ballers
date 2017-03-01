@@ -93,6 +93,17 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	//hasShovel may be temporary. May switch to array or List<>()
 	private bool hasShovel = false;
 
+	// Variables for digging. CraterMaker code
+	private TerrainData terrainData;
+	private float [,] originalTerrain;
+	public Texture2D craterTexture;
+	private int xRes;
+	private int zRes;
+	private Color [] craterColors;
+	private Terrain terrain;
+	// End of CraterMaker Variables
+
+
 	void Start() {
 		if (!isLocalPlayer) {
 			return;
@@ -104,6 +115,20 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		movementVector = new Vector3();
 
 		stamina = maxStamina;
+
+		// Crater Maker Code. Saves the terrain data sw the program can reset it on quit.
+		//terrainData = Terrain.activeTerrain.terrainData;
+		terrainData = terrain.terrainData;
+		xRes = terrainData.heightmapWidth;
+		zRes = terrainData.heightmapHeight;
+		originalTerrain = terrainData.GetHeights(0, 0, xRes, zRes);
+		craterColors = craterTexture.GetPixels();
+		// End of CraterMaker code
+	}
+
+	void OnApplicationQuit() {
+		// Resets the terrain on quitting
+		terrainData.SetHeights(0, 0, originalTerrain);
 	}
 
 	void Update() {
@@ -127,6 +152,7 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	}
 
 	private void setupGOs() {
+		terrain = GameObject.Find("Terrain").gameObject.GetComponent<Terrain>();
 		hudGO = GameObject.Find("Canvas");
 		reticleGO = hudGO.transform.Find("Reticle").gameObject;
 		snowballPanelGO = hudGO.transform.Find("Snowball Panel").gameObject;
@@ -719,11 +745,47 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		//use a shovel.
 		if (hasShovel && Input.GetButton("Action") && characterController.isGrounded) {
 			shovelGO.SetActive(true);
-
-			Debug.Log(hasShovel);
+			dig();
 		}
 		else {
 			shovelGO.SetActive(false);
 		}
+	}
+
+	//Dig
+	private void dig() {
+		//Vector3 mousePosition = new Vector3 ();
+		//Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+		//RaycastHit hit;
+
+		//if (Physics.Raycast(ray, out hit, 1000)) {
+		//	mousePosition = hit.point;
+		//}
+
+
+		//float mouseX = mousePosition.x;
+		//float mouseZ = mousePosition.z;
+		int x = (int) Mathf.Lerp(0, xRes, Mathf.InverseLerp(0, terrainData.size.x, transform.position.x));
+		int z = (int) Mathf.Lerp(0, zRes, Mathf.InverseLerp(0, terrainData.size.z, transform.position.z));
+
+		int craterHalfWidth = craterTexture.width / 2;
+		int craterHalfHeight = craterTexture.height / 2;
+
+		x = Mathf.Clamp(x, craterHalfWidth, xRes - craterHalfWidth);
+		z = Mathf.Clamp(z, craterHalfHeight, zRes - craterHalfHeight);
+
+		float [,] terrainArea = terrainData.GetHeights(x - craterHalfWidth, z - craterHalfHeight, craterTexture.width, craterTexture.height);
+
+		for (int h = 0; h < craterTexture.height; h++) {
+			for (int w = 0; w < craterTexture.width; w++) {
+				terrainArea[h, w] = terrainArea[h, w] - craterColors[h * craterTexture.width + w].a * 0.01f;
+			}
+		}
+
+		terrainData.SetHeights(x - craterHalfWidth, z - craterHalfHeight, terrainArea);
+		//Debug.Log("xRes: " + zRes);
+		//Debug.Log("transformX:" + transform.position.z + " X: " + x + " Z: " + z);
+		//Debug.Log("TYD: " + terrainData.size.y + " TFY: " + transform.position.y + " MouseY: " + mousePosition.y);
+
 	}
 }

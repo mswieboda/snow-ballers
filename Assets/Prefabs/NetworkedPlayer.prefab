@@ -1354,6 +1354,8 @@ MonoBehaviour:
   jumpStaminaAmount: 15
   throwStaminaAmount: 5
   gainStaminaAmount: 15
+  craterTexture: {fileID: 2800000, guid: 187a0558ddddb824b990d836d078c8af, type: 3}
+  terrain: {fileID: 0}
 --- !u!114 &114366719085556944
 MonoBehaviour:
   m_ObjectHideFlags: 1
