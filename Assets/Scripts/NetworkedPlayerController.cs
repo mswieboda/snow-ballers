@@ -79,6 +79,7 @@ public class NetworkedPlayerController : NetworkBehaviour {
 
 	private bool isAiming = false;
 	private bool isSprinting = false;
+
 	private bool isCrouched = false;
 	private bool isGettingSnowballs = false;
 
@@ -154,7 +155,11 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		// Enable cameras
 		mainCamera.GetComponent<AudioListener>().enabled = true;
 
-		Camera[] cameras = new Camera[] { mainCamera, crouchOTSCamera, sprintOTSCamera };
+		Camera[] cameras = new Camera[] {
+			mainCamera,
+			crouchOTSCamera,
+			sprintOTSCamera
+		};
 		foreach(Camera camera in cameras) {
 			camera.enabled = true;
 		}
@@ -241,6 +246,8 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	}
 
 	private void sprint() {
+		bool wasSprinting = isSprinting;
+
 		if(!isCrouched && Input.GetButton("Sprint")) {
 			isSprinting = true;
 
@@ -248,7 +255,24 @@ public class NetworkedPlayerController : NetworkBehaviour {
 			if(Input.GetAxisRaw("Vertical") > 0) {
 				useStamina(sprintStaminaAmount);
 			}
+		}
+		else {
+			isSprinting = false;
+		}
 
+		if (isSprinting != wasSprinting) {
+			CmdToggleSprint(isSprinting, isCrouched);
+		}
+	}
+
+	[Command]
+	void CmdToggleSprint(bool isSprinting, bool isCrouched) {
+		RpcToggleSprint(isSprinting, isCrouched);
+	}
+
+	[ClientRpc]
+	void RpcToggleSprint(bool isSprinting, bool isCrouched) {
+		if (isSprinting) {
 			sprintGO.SetActive(true);
 			standGO.SetActive(false);
 
@@ -264,8 +288,6 @@ public class NetworkedPlayerController : NetworkBehaviour {
 				sprintHeldSnowballGO.SetActive(false);
 				standHeldSnowballGO.SetActive(true);
 			}
-
-			isSprinting = false;
 
 			if(isCrouched) {
 				crouchGO.SetActive(true);
@@ -459,11 +481,7 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	 * Get Snowballs
      *****************************/
 	private void getSnowballs() {
-		if (!characterController.isGrounded){
-			stopMakingSnowballs();
-			return;
-		}
-		else if(snowballs < maxSnowballs && hasStamina() && Input.GetButton("Reload")) {
+		if(characterController.isGrounded && snowballs < maxSnowballs && hasStamina() && Input.GetButton("Reload")) {
 			makeSnowballs();
 		}
 		else {
@@ -476,13 +494,10 @@ public class NetworkedPlayerController : NetworkBehaviour {
 			return;
 		}
 
+		bool wasGettingSnowballs = isGettingSnowballs;
+
 		if (!isGettingSnowballs) {
 			timeGettingSnowballs = Time.time;
-
-			standGO.SetActive(false);
-			crouchGO.SetActive(false);
-			sprintGO.SetActive(false);
-			getSnowballsGO.SetActive(true);
 		}
 
 		if (Time.time - timeGettingSnowballs > secondsToMakeSnowball) {
@@ -493,6 +508,10 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		useStamina(makeSnowballStaminaAmount);
 
 		isGettingSnowballs = true;
+
+		if (wasGettingSnowballs != isGettingSnowballs) {
+			CmdToggleGettingSnowballs(isGettingSnowballs, isCrouched, isSprinting);
+		}
 	}
 
 	private void stopMakingSnowballs() {
@@ -502,21 +521,39 @@ public class NetworkedPlayerController : NetworkBehaviour {
 
 		timeGettingSnowballs = 0;
 
-		if(isCrouched) {
-			crouchGO.SetActive(true);
+		isGettingSnowballs = false;
+
+		CmdToggleGettingSnowballs(isGettingSnowballs, isCrouched, isSprinting);
+	}
+
+	[Command]
+	void CmdToggleGettingSnowballs(bool isGettingSnowballs, bool isCrouched, bool isSprinting) {
+		RpcToggleGettingSnowballs(isGettingSnowballs, isCrouched, isSprinting);
+	}
+
+	[ClientRpc]
+	void RpcToggleGettingSnowballs(bool isGettingSnowballs, bool isCrouched, bool isSprinting) {
+		if (isGettingSnowballs) {
+			standGO.SetActive(false);
+			crouchGO.SetActive(false);
+			sprintGO.SetActive(false);
+			getSnowballsGO.SetActive(true);
 		}
 		else {
-			if(isSprinting) {
-				sprintGO.SetActive(true);
+			if(isCrouched) {
+				crouchGO.SetActive(true);
 			}
 			else {
-				standGO.SetActive(true);
+				if(isSprinting) {
+					sprintGO.SetActive(true);
+				}
+				else {
+					standGO.SetActive(true);
+				}
 			}
+
+			getSnowballsGO.SetActive(false);
 		}
-
-		getSnowballsGO.SetActive(false);
-
-		isGettingSnowballs = false;
 	}
 
 	/*****************************
@@ -524,20 +561,29 @@ public class NetworkedPlayerController : NetworkBehaviour {
      *****************************/
 	private void crouch() {
 		if(!isGettingSnowballs && Input.GetButtonDown("Crouch")) {
-			toggleCrouch();
+			isCrouched = !isCrouched;
+
+			CmdToggleCrouch(isCrouched, isSprinting);
 		}
 	}
 
-	private void toggleCrouch() {
-		if (isGettingSnowballs) {
-			return;
+	[Command]
+	void CmdToggleCrouch(bool isCrouched, bool isSprinting) {
+		RpcToggleCrouch(isCrouched, isSprinting);
+	}
+
+	[ClientRpc]
+	void RpcToggleCrouch(bool isCrouched, bool isSprinting) {
+		crouchGO.SetActive(isCrouched);
+
+		if (isSprinting) {
+			sprintGO.SetActive(!isCrouched);
+		}
+		else {
+			standGO.SetActive(!isCrouched);
 		}
 
-		isCrouched = !isCrouched;
-
-		standGO.SetActive(!isCrouched);
-		sprintGO.SetActive(!isCrouched);
-		crouchGO.SetActive(isCrouched);
+		Debug.Log("c: " + isCrouched + " s: " + isSprinting);
 
 		// If we were holding a snowball, keep holding it after toggle
 		if (isCrouched) {
