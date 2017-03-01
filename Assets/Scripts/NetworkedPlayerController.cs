@@ -583,8 +583,6 @@ public class NetworkedPlayerController : NetworkBehaviour {
 			standGO.SetActive(!isCrouched);
 		}
 
-		Debug.Log("c: " + isCrouched + " s: " + isSprinting);
-
 		// If we were holding a snowball, keep holding it after toggle
 		if (isCrouched) {
 			if(standHeldSnowballGO.activeSelf) {
@@ -719,8 +717,6 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		//use a shovel.
 		if (hasShovel && Input.GetButton("Action") && characterController.isGrounded) {
 			shovelGO.SetActive(true);
-
-			Debug.Log(hasShovel);
 		}
 		else {
 			shovelGO.SetActive(false);
