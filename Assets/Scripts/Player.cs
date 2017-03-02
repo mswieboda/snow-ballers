@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface Player {
-	void setTeam(Team team);
-	void setPosition(Vector3 position);
-	void changeColor(Color color);
+public interface Player : Teamable, Spawnable {
+	// TODO: custom player methods like hitBySnowball(GameObject), pickUp(Flag/GameObject)
 }

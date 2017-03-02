@@ -29,6 +29,13 @@ public class CaptureTheFlag : GameMode {
 		// shuffle player order
 		Utils.Shuffle<Player>(players);
 
+		// Add flags
+		foreach (Team team in teams) {
+			Transform flagBase = team.transform.FindChild("Flag Base");
+			Flag flag = flagBase.GetComponentInChildren<Flag>();
+			flag.setTeam(team);
+		}
+
 		// assign player teams
 		int startIndex = 0;
 		for (int t = 0; t < teams.Length; t++) {
