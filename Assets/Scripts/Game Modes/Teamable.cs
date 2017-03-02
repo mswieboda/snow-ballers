@@ -5,4 +5,5 @@ using UnityEngine;
 public interface Teamable {
 	void setTeam(Team team);
 	void changeColor(Color color);
+	Team getTeam();
 }

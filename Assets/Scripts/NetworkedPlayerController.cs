@@ -720,15 +720,39 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 		changeColor(team.color);
 	}
 
+	public Team getTeam() {
+		return team;
+	}
+
 	public void setPosition(Vector3 position) {
 		transform.position = position;
 	}
 
-	private void OnTriggerEnter(Collider item){
+	public void pickUp(Flag flag) {
+		if (flag.getTeam() != team) {
+			Debug.Log("picked up a flag!!!");
+			flag.transform.SetParent(transform);
+			flag.setPosition(Vector3.zero);
+		}
+		else {
+			Debug.Log("returning your team's flag!!!");
+		}
+	}
 
+	/*****************************
+	 * Shovel / Inventory
+     *****************************/
+
+	private void OnTriggerEnter(Collider item){
 		if (item.gameObject.CompareTag("Pick Up")) {
 			item.gameObject.SetActive(false);
 			hasShovel = true;
+		}
+
+		Flag flag = item.GetComponent<Flag>();
+
+		if (flag != null) {
+			pickUp(flag);
 		}
 
 	}

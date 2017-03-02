@@ -9,6 +9,10 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 		team = newTeam;
 	}
 
+	public Team getTeam() {
+		return team;
+	}
+
 	public void changeColor(Color color) {
 		GetComponent<MeshRenderer>().material.color = color;
 	}

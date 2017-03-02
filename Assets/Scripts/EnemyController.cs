@@ -50,11 +50,21 @@ public class EnemyController : NetworkBehaviour, Player {
 		changeColor(team.color);
 	}
 
+	public Team getTeam() {
+		return team;
+	}
+
 	public void setPosition(Vector3 position) {
 		transform.position = position;
 	}
 
 	public void changeColor(Color color) {
 		GetComponent<MeshRenderer>().material.color = color;
+	}
+
+	public void pickUp(Flag flag) {
+		Debug.Log("picked up a flag!!!");
+		flag.transform.SetParent(transform);
+		flag.setPosition(Vector3.zero);
 	}
 }
