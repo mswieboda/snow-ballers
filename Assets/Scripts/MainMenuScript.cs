@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MainMenuScript : MonoBehaviour {
 	void Start () {
-		Cursor.visible = true;
-		Cursor.lockState = CursorLockMode.Confined;
+		enableCursor();
 	}
 
 	public void ExitGame() {
@@ -14,5 +13,15 @@ public class MainMenuScript : MonoBehaviour {
 		#else
 		Application.Quit();
 		#endif
+	}
+
+	public void enableCursor() {
+		Cursor.visible = true;
+		Cursor.lockState = CursorLockMode.Confined;
+	}
+
+	public void disableCursor() {
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
 	}
 }

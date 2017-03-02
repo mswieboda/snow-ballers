@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyController : NetworkBehaviour {
+public class EnemyController : NetworkBehaviour, Player {
 	public float strafeSpeed = 1f;
 	public float timeToMove = 1.5f;
 
@@ -11,6 +11,7 @@ public class EnemyController : NetworkBehaviour {
 	private Vector3 movementVector;
 	private float timeMoving;
 	private int direction = 0;
+	private Team team;
 
 	void Start() {
 		characterController = GetComponent<CharacterController>();
@@ -41,5 +42,19 @@ public class EnemyController : NetworkBehaviour {
 		movementVector.x = direction * strafeSpeed;
 		movementVector *= Time.deltaTime;
 		characterController.Move(movementVector);
+	}
+
+	public void setTeam(Team newTeam) {
+		team = newTeam;
+
+		changeColor(team.color);
+	}
+
+	public void setPosition(Vector3 position) {
+		transform.position = position;
+	}
+
+	public void changeColor(Color color) {
+		GetComponent<MeshRenderer>().material.color = color;
 	}
 }

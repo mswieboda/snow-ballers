@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class NetworkedPlayerController : NetworkBehaviour {
+public class NetworkedPlayerController : NetworkBehaviour, Player {
 	public Camera mainCamera;
 
 	public GameObject standGO;
@@ -34,6 +34,9 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	private GameObject staminaPanelGO;
 
 	public GameObject shovelGO;
+
+	// Team / GameMode stuff
+	private Team team;
 
 	public float normalForwardSpeed = 10;
 	public float crouchForwardSpeed = 5;
@@ -137,20 +140,7 @@ public class NetworkedPlayerController : NetworkBehaviour {
 	 * Networking
 	 *****************************/
 	public override void OnStartLocalPlayer() {
-		GameObject[] gameObjects = new GameObject[] { 
-			standGO, standArmGO,
-			crouchGO, crouchArmGO,
-			sprintGO, sprintArmGO,
-			getSnowballsGO, getSnowballsArmGO
-		};
-
-		// Set meshes to green
-		foreach(GameObject gameObject in gameObjects) {
-			bool isActive = gameObject.activeSelf;
-			gameObject.SetActive(true);
-			gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
-			gameObject.SetActive(isActive);
-		}
+		changeColor(Color.green);
 
 		// Enable cameras
 		mainCamera.GetComponent<AudioListener>().enabled = true;
@@ -162,6 +152,23 @@ public class NetworkedPlayerController : NetworkBehaviour {
 		};
 		foreach(Camera camera in cameras) {
 			camera.enabled = true;
+		}
+	}
+
+	public void changeColor(Color color) {
+		GameObject[] gameObjects = new GameObject[] { 
+			standGO, standArmGO,
+			crouchGO, crouchArmGO,
+			sprintGO, sprintArmGO,
+			getSnowballsGO, getSnowballsArmGO
+		};
+
+		// Set meshes to green
+		foreach(GameObject gameObject in gameObjects) {
+			bool isActive = gameObject.activeSelf;
+			gameObject.SetActive(true);
+			gameObject.GetComponent<MeshRenderer>().material.color = color;
+			gameObject.SetActive(isActive);
 		}
 	}
 
@@ -702,6 +709,19 @@ public class NetworkedPlayerController : NetworkBehaviour {
 
 		snowballs--;
 		displaySnowballs();
+	}
+
+	/*****************************
+	 * Team / Game Mode
+     *****************************/
+	public void setTeam(Team newTeam) {
+		team = newTeam;
+
+		changeColor(team.color);
+	}
+
+	public void setPosition(Vector3 position) {
+		transform.position = position;
 	}
 
 	private void OnTriggerEnter(Collider item){
