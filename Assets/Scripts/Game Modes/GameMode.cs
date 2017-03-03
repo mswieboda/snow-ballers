@@ -5,4 +5,7 @@ using UnityEngine;
 public class GameMode : MonoBehaviour {
 	public virtual void StartGameMode() {
 	}
+
+	public virtual void displayScoreboard() {
+	}
 }

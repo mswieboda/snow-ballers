@@ -35,9 +35,6 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 
 	public GameObject shovelGO;
 
-	// Team / GameMode stuff
-	private Team team;
-
 	public float normalForwardSpeed = 10;
 	public float crouchForwardSpeed = 5;
 	public float sprintForwardSpeed = 15;
@@ -154,23 +151,6 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 		};
 		foreach(Camera camera in cameras) {
 			camera.enabled = true;
-		}
-	}
-
-	public void changeColor(Color color) {
-		GameObject[] gameObjects = new GameObject[] { 
-			standGO, standArmGO,
-			crouchGO, crouchArmGO,
-			sprintGO, sprintArmGO,
-			getSnowballsGO, getSnowballsArmGO
-		};
-
-		// Set meshes to green
-		foreach(GameObject gameObject in gameObjects) {
-			bool isActive = gameObject.activeSelf;
-			gameObject.SetActive(true);
-			gameObject.GetComponent<MeshRenderer>().material.color = color;
-			gameObject.SetActive(isActive);
 		}
 	}
 
@@ -714,30 +694,61 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 	}
 
 	/*****************************
-	 * Team / Game Mode
+	 * Teamable
      *****************************/
-	public void setTeam(Team newTeam) {
-		team = newTeam;
-
-		changeColor(team.color);
+	private Team mTeam;
+	public Team team { 
+		get { return mTeam; }
+		set
+		{
+			mTeam = value;
+			changeColor(mTeam.color);
+		}
 	}
 
-	public Team getTeam() {
-		return team;
+	public void changeColor(Color color) {
+		GameObject[] gameObjects = new GameObject[] { 
+			standGO, standArmGO,
+			crouchGO, crouchArmGO,
+			sprintGO, sprintArmGO,
+			getSnowballsGO, getSnowballsArmGO
+		};
+
+		// Set meshes to green
+		foreach(GameObject gameObject in gameObjects) {
+			bool isActive = gameObject.activeSelf;
+			gameObject.SetActive(true);
+			gameObject.GetComponent<MeshRenderer>().material.color = color;
+			gameObject.SetActive(isActive);
+		}
 	}
 
+	/****************************
+	 * Spawnable
+	 ****************************/
 	public void setPosition(Vector3 position) {
 		transform.position = position;
 	}
 
+	/****************************
+	 * Game Modes - Capture The Flag
+	 ****************************/
+	public bool hasFlag { get; set; }
+		
 	public void pickUp(Flag flag) {
-		if (flag.getTeam() != team) {
-			Debug.Log("picked up a flag!!!");
-			flag.transform.SetParent(transform);
-			flag.setPosition(Vector3.zero);
+		if (hasFlag) {
+			return;
+		}
+
+		if (flag.team == team) {
+			if (!flag.isAtBase()) {
+				flag.returnToBase();
+			}
 		}
 		else {
-			Debug.Log("returning your team's flag!!!");
+			hasFlag = true;
+			flag.transform.SetParent(transform);
+			flag.transform.localPosition = standArmGO.transform.localPosition;
 		}
 	}
 
@@ -745,18 +756,33 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 	 * Shovel / Inventory
      *****************************/
 
-	private void OnTriggerEnter(Collider item){
+	private void OnTriggerEnter(Collider item) {
+		Flag flag;
+
 		if (item.gameObject.CompareTag("Pick Up")) {
 			item.gameObject.SetActive(false);
 			hasShovel = true;
 		}
-
-		Flag flag = item.GetComponent<Flag>();
+			
+		flag = item.gameObject.GetComponent<Flag>();
 
 		if (flag != null) {
 			pickUp(flag);
 		}
 
+		FlagTrigger flagTrigger = item.gameObject.GetComponent<FlagTrigger>();
+
+		if (flagTrigger != null) {
+			if (flagTrigger.team == team) {
+				flag = transform.GetComponentInChildren<Flag>();
+
+				if (flag != null && hasFlag) {
+					team.addScore(1);
+					flag.returnToBase();
+					hasFlag = false;
+				}
+			}
+		}
 	}
 
 	private void useItem() {

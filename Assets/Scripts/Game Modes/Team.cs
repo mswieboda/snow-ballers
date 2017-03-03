@@ -7,15 +7,19 @@ public class Team : MonoBehaviour {
 	public Color color;
 	private NetworkStartPosition[] startPositions;
 	private List<Player> players;
+	private GameMode gameMode;
+
+	private int score = 0;
 
 	void Awake() {
 		players = new List<Player>();
 		startPositions = transform.GetComponentsInChildren<NetworkStartPosition>();
+		gameMode = transform.GetComponentInParent<GameMode>();
 	}
 
 	public void addPlayer(Player player) {
 		players.Add(player);
-		player.setTeam(this);
+		player.team = this;
 	}
 
 	public List<Player> Players {
@@ -33,5 +37,15 @@ public class Team : MonoBehaviour {
 
 			player.setPosition(startPostion.transform.position);
 		}
+	}
+
+	public void addScore(int num) {
+		score += num;
+
+		gameMode.displayScoreboard();
+	}
+
+	public int getScore() {
+		return score;
 	}
 }

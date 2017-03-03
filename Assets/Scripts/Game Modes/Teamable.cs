@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface Teamable {
-	void setTeam(Team team);
+	Team team { get; set; }
 	void changeColor(Color color);
-	Team getTeam();
 }

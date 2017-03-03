@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class CaptureTheFlag : GameMode {
+	private Team [] teams;
+	private Text scoreText;
+
 	public override void StartGameMode () {
-		Team [] teams = transform.GetComponentsInChildren<Team>();
+		teams = transform.GetComponentsInChildren<Team>();
 		List<Player> players = new List<Player>();
 
 		players.AddRange(GameObject.FindObjectsOfType<NetworkedPlayerController>());
@@ -32,8 +36,12 @@ public class CaptureTheFlag : GameMode {
 		// Add flags
 		foreach (Team team in teams) {
 			Transform flagBase = team.transform.FindChild("Flag Base");
-			Flag flag = flagBase.GetComponentInChildren<Flag>();
-			flag.setTeam(team);
+			FlagTrigger flagTrigger = flagBase.GetComponentInChildren<FlagTrigger>();
+			flagTrigger.team = team;
+
+			Flag flag = team.gameObject.GetComponentInChildren<Flag>();
+			flag.team = team;
+			flag.setBasePosition(flag.transform.position);
 		}
 
 		// assign player teams
@@ -56,6 +64,16 @@ public class CaptureTheFlag : GameMode {
 
 		// start game timer
 		Debug.Log("GO GO GO!");
+	}
+
+	public override void displayScoreboard() {
+		foreach (Team team in teams) {
+			Canvas scoreboard = team.GetComponentInChildren<Canvas>();
+			RectTransform panel = scoreboard.GetComponentInChildren<RectTransform>();
+			Text text = panel.GetComponentInChildren<Text>();
+
+			text.text = team.getScore().ToString();
+		}
 	}
 }
 

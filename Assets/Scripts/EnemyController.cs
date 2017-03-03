@@ -11,7 +11,6 @@ public class EnemyController : NetworkBehaviour, Player {
 	private Vector3 movementVector;
 	private float timeMoving;
 	private int direction = 0;
-	private Team team;
 
 	void Start() {
 		characterController = GetComponent<CharacterController>();
@@ -44,27 +43,35 @@ public class EnemyController : NetworkBehaviour, Player {
 		characterController.Move(movementVector);
 	}
 
-	public void setTeam(Team newTeam) {
-		team = newTeam;
-
-		changeColor(team.color);
-	}
-
-	public Team getTeam() {
-		return team;
-	}
-
-	public void setPosition(Vector3 position) {
-		transform.position = position;
+	/*****************************
+	 * Teamable
+     *****************************/
+	private Team mTeam;
+	public Team team { 
+		get { return mTeam; }
+		set
+		{
+			mTeam = value;
+			changeColor(mTeam.color);
+		}
 	}
 
 	public void changeColor(Color color) {
 		GetComponent<MeshRenderer>().material.color = color;
 	}
 
+	/****************************
+	 * Spawnable
+	 ****************************/
+	public void setPosition(Vector3 position) {
+		transform.position = position;
+	}
+
+	/****************************
+	 * Game Modes - Capture The Flag
+	 ****************************/
+	public bool hasFlag { get; set; }
+
 	public void pickUp(Flag flag) {
-		Debug.Log("picked up a flag!!!");
-		flag.transform.SetParent(transform);
-		flag.setPosition(Vector3.zero);
 	}
 }
