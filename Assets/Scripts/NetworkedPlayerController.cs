@@ -98,6 +98,8 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 
 	void Start() {
 		if (!isLocalPlayer) {
+			mainCamera.gameObject.SetActive(false);
+
 			return;
 		}
 
