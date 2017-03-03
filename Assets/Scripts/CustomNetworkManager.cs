@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class CustomNetworkManager : NetworkManager {
 	public Camera defaultCamera;
 
-	public override void OnStartHost() {
+	public override void OnStartClient(NetworkClient client) {
 		defaultCamera.gameObject.SetActive(false);
 	}
 }
