@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Flag : MonoBehaviour, Teamable, Spawnable {
-	
+
+	public Player holder { get; set; }
+
 	private Vector3 basePosition;
 
 	private Team mTeam;
@@ -36,8 +38,19 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 		return transform.position == basePosition;
 	}
 
-	public void returnToBase() {
-		setPosition(basePosition);
+	public bool isHeld() {
+		return holder != null;
+	}
+
+	public void dropFromHolder() {
+		holder.heldFlag = null;
+		holder = null;
+
 		transform.SetParent(team.transform);
+	}
+
+	public void returnToBase() {
+		dropFromHolder();
+		setPosition(basePosition);
 	}
 }

@@ -70,7 +70,11 @@ public class EnemyController : NetworkBehaviour, Player {
 	/****************************
 	 * Game Modes - Capture The Flag
 	 ****************************/
-	public bool hasFlag { get; set; }
+	public Flag heldFlag { get; set; }
+
+	public bool hasFlag() {
+		return heldFlag != null;
+	}
 
 	public void pickUp(Flag flag) {
 	}

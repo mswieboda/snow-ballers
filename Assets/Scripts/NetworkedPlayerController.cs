@@ -733,20 +733,21 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 	/****************************
 	 * Game Modes - Capture The Flag
 	 ****************************/
-	public bool hasFlag { get; set; }
-		
-	public void pickUp(Flag flag) {
-		if (hasFlag) {
-			return;
-		}
+	public Flag heldFlag { get; set; }
 
+	public bool hasFlag() {
+		return heldFlag != null;
+	}
+
+	public void pickUp(Flag flag) {
 		if (flag.team == team) {
-			if (!flag.isAtBase()) {
+			if (!flag.isAtBase() && !flag.isHeld()) {
 				flag.returnToBase();
 			}
 		}
 		else {
-			hasFlag = true;
+			heldFlag = flag;
+			flag.holder = this;
 			flag.transform.SetParent(transform);
 			flag.transform.localPosition = standArmGO.transform.localPosition;
 		}
@@ -757,31 +758,19 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
      *****************************/
 
 	private void OnTriggerEnter(Collider item) {
-		Flag flag;
-
 		if (item.gameObject.CompareTag("Pick Up")) {
 			item.gameObject.SetActive(false);
 			hasShovel = true;
 		}
 			
-		flag = item.gameObject.GetComponent<Flag>();
-
+		Flag flag = item.gameObject.GetComponent<Flag>();
 		if (flag != null) {
 			pickUp(flag);
 		}
 
 		FlagTrigger flagTrigger = item.gameObject.GetComponent<FlagTrigger>();
-
 		if (flagTrigger != null) {
-			if (flagTrigger.team == team) {
-				flag = transform.GetComponentInChildren<Flag>();
-
-				if (flag != null && hasFlag) {
-					team.addScore(1);
-					flag.returnToBase();
-					hasFlag = false;
-				}
-			}
+			flagTrigger.triggeredBy(this);
 		}
 	}
 

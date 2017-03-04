@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public interface CaptureTheFlaggable {
+	Flag heldFlag { get; set; }
 	void pickUp(Flag flag);
-	bool hasFlag { get; set; }
+	bool hasFlag();
 }

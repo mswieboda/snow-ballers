@@ -18,55 +18,27 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		inProgress = true;
 
 		teams = transform.GetComponentsInChildren<Team>();
+
 		List<Player> players = new List<Player>();
 
 		players.AddRange(GameObject.FindObjectsOfType<NetworkedPlayerController>());
 		players.AddRange(GameObject.FindObjectsOfType<EnemyController>());
 
-		// Split teams into sizes, with remainers in last team
-		int [] teamSizes = new int[teams.Length];
-		int playersRemaining = players.Count;
-		for (int i = 0; i < teams.Length; i++) {
-			int size = Mathf.RoundToInt(players.Count / teams.Length);
-
-			if (i >= teams.Length - 1) {
-				size = playersRemaining;
-			}
-
-
-			teamSizes[i] = size;
-			playersRemaining -= size;
-		}
-
-		// TODO: Shuffling needs to be done on server and pass index order to clients?
-		// Utils.Shuffle<Player>(players);
-
 		// Add flags
 		foreach (Team team in teams) {
-			Transform flagBase = team.transform.FindChild("Flag Base");
-			FlagTrigger flagTrigger = flagBase.GetComponentInChildren<FlagTrigger>();
-			flagTrigger.team = team;
-
 			Flag flag = team.gameObject.GetComponentInChildren<Flag>();
 			flag.team = team;
 			flag.setBasePosition(flag.transform.position);
+
+			Transform flagBase = team.transform.FindChild("Flag Base");
+			FlagTrigger flagTrigger = flagBase.GetComponentInChildren<FlagTrigger>();
+			flagTrigger.team = team;
+			flagTrigger.teamFlag = flag;
 		}
 
-		// assign player teams
-		int startIndex = 0;
-		for (int t = 0; t < teams.Length; t++) {
-			Team team = teams[t];
-			int teamSize = teamSizes[t];
-
-			for (int i = startIndex; i < startIndex + teamSize; i++) {
-				Player player = players[i];
-				team.addPlayer(player);
-			}
-			startIndex += teamSize;
-		}
+		assignTeams(players);
 
 		foreach (Team team in teams) {
-			// respawn teams
 			team.spawnPlayers();
 		}
 
@@ -108,18 +80,23 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 
 		isDone = true;
 	}
-}
 
-public static class Utils {
-	public static void Shuffle<T>(this IList<T> list)  
-	{  
-		int n = list.Count;
-		while (n > 1) {
-			n--;
-			int k = Random.Range(0, n + 1);
-			T value = list[k];
-			list[k] = list[n];
-			list[n] = value;
-		}  
+	// Assigns teams round robin style
+	private void assignTeams(IList<Player> players) {
+		Team team;
+		int teamIndex = 0;
+
+		for (int i = 0; i < players.Count; i++) {
+			Player player = players[i];
+
+			team = teams[teamIndex];
+			team.addPlayer(player);
+
+			teamIndex++;
+
+			if (teamIndex >= teams.Length) {
+				teamIndex = 0;
+			}
+		}
 	}
 }

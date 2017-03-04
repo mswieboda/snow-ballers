@@ -33,6 +33,7 @@ public class GameModeManager : NetworkBehaviour {
 			}
 		}
 
+		// Note: only works on HOST for now because of Player/Client Authority
 		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
 			CmdShowMenu();
 		}
