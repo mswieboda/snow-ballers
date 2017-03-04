@@ -237,7 +237,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	private void sprint() {
 		bool wasSprinting = isSprinting;
 
-		if(!isCrouched && Input.GetButton("Sprint")) {
+		if(!isCrouched && Input.GetButton("Sprint") && !hasFlag()) {
 			isSprinting = true;
 
 			// Are we moving foward?
@@ -374,7 +374,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	 * Throw Snowballs
      *****************************/
 	private void throwActions() {
-		if(snowballs > 0 && !isGettingSnowballs && hasStamina() && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
+		if(snowballs > 0 && !isGettingSnowballs && hasStamina() && Time.time - timeLastThrownSnowball > secondsToThrowSnowball && !hasFlag()) {
 			if(Input.GetButtonDown("Throw")) {
 				holdSnowball();
 			}
