@@ -38,8 +38,8 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 			playersRemaining -= size;
 		}
 
-		// shuffle player order
-		Utils.Shuffle<Player>(players);
+		// TODO: Shuffling needs to be done on server and pass index order to clients?
+		// Utils.Shuffle<Player>(players);
 
 		// Add flags
 		foreach (Team team in teams) {

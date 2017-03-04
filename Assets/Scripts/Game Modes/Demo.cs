@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class Demo : MonoBehaviour, GameMode {
 	public bool inProgress { get; set; }

@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class GameModeManager : MonoBehaviour {
+public class GameModeManager : NetworkBehaviour {
 	private GameMode defaultGameMode;
 	public Canvas canvasMenu;
 
@@ -12,29 +13,50 @@ public class GameModeManager : MonoBehaviour {
 	void Awake () {
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
-		switchGameMode(defaultGameMode);
+
+		if (isServer) {
+			RpcSwitchGameMode(defaultGameMode.gameObject.name);
+		}
 	}
 
 	void Update () {
 		if (currentGameMode.isDone) {
-			switchGameMode(defaultGameMode);
+			CmdSwitchGameMode(defaultGameMode.gameObject.name);
 
 			// Reset player colors
 			NetworkedPlayerController [] players = GameObject.FindObjectsOfType<NetworkedPlayerController>();
 
 			foreach (NetworkedPlayerController player in players) {
-				player.OnStartLocalPlayer();
+				if (player.isLocalPlayer) {
+					player.OnStartLocalPlayer();
+				}
 			}
 		}
 
 		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
-			showMenu();
+			CmdShowMenu();
 		}
 	}
 
-	public void showMenu() {
+	[Command]
+	public void CmdShowMenu() {
+		RpcShowMenu();
+	}
+
+	[ClientRpc]
+	public void RpcShowMenu() {
 		canvasMenu.gameObject.SetActive(true);
 		canvasMenu.GetComponent<MainMenuScript>().enableCursor();
+	}
+
+	[Command]
+	public void CmdHideMenu() {
+		RpcHideMenu();
+	}
+
+	[ClientRpc]
+	public void RpcHideMenu() {
+		hideMenu();
 	}
 
 	public void hideMenu() {
@@ -42,7 +64,21 @@ public class GameModeManager : MonoBehaviour {
 		canvasMenu.GetComponent<MainMenuScript>().disableCursor();
 	}
 
-	public void switchGameMode(GameMode gameMode) {
+	[Command]
+	public void CmdSwitchGameMode(string gameModeName) {
+		RpcSwitchGameMode(gameModeName);
+	}
+
+	[ClientRpc]
+	public void RpcSwitchGameMode(string gameModeName) {
+		GameMode gameMode = null;
+		Transform gameModeTransform = transform.FindChild(gameModeName);
+
+
+		if (gameModeTransform != null) {
+			gameMode = gameModeTransform.GetComponent<GameMode>();
+		}
+
 		if (gameMode != null) {
 			currentGameMode.gameObject.SetActive(false);
 
@@ -51,6 +87,8 @@ public class GameModeManager : MonoBehaviour {
 		else {
 			currentGameMode = defaultGameMode;
 		}
+
+		hideMenu();
 
 		currentGameMode.gameObject.SetActive(true);
 		currentGameMode.StartGameMode();
