@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4514234631941100}
   - component: {fileID: 33315974370063764}
   - component: {fileID: 23700208413161492}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 124588918574847084}
   - component: {fileID: 81382942724983018}
   - component: {fileID: 114702254432777674}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 65620203700668806}
   - component: {fileID: 23587890132472190}
   - component: {fileID: 54126235237628112}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Shovel
   m_TagString: Pick Up
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 4993669313391922}
   - component: {fileID: 33539343489881772}
   - component: {fileID: 23248328330029026}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 4248836810325150}
   - component: {fileID: 33311661148770768}
   - component: {fileID: 23664917507453808}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 124385420267258632}
   - component: {fileID: 92832865650378266}
   - component: {fileID: 114796743697321286}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: OTS Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 124123719484515388}
   - component: {fileID: 92749703526079368}
   - component: {fileID: 114796141455865568}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: OTS Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 4932714115581348}
   - component: {fileID: 33717238435922266}
   - component: {fileID: 23568861378699226}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Held Snowball
   m_TagString: Snowball
   m_Icon: {fileID: 0}
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 4786385322209614}
   - component: {fileID: 33125312908360540}
   - component: {fileID: 23872506865298968}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,7 @@ GameObject:
   - component: {fileID: 4572877510318394}
   - component: {fileID: 33061866388652500}
   - component: {fileID: 23790512509227252}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ GameObject:
   - component: {fileID: 114366719085556944}
   - component: {fileID: 114246328618328662}
   - component: {fileID: 114551747641494274}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: NetworkedPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +219,7 @@ GameObject:
   - component: {fileID: 4571858936220468}
   - component: {fileID: 33553356306992658}
   - component: {fileID: 23018782242666870}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Crouch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 4538856888128334}
   - component: {fileID: 33550323482457268}
   - component: {fileID: 23119578402117884}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Held Snowball
   m_TagString: Snowball
   m_Icon: {fileID: 0}
@@ -253,7 +253,7 @@ GameObject:
   - component: {fileID: 4344087921953058}
   - component: {fileID: 33554507851085064}
   - component: {fileID: 23893080230819686}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 4989315526237466}
   - component: {fileID: 33823295344693034}
   - component: {fileID: 23072300263038310}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Stand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +287,7 @@ GameObject:
   - component: {fileID: 4630206218957722}
   - component: {fileID: 33752051374720082}
   - component: {fileID: 23238244799516834}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Get Snowballs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,7 @@ GameObject:
   - component: {fileID: 124999132295609036}
   - component: {fileID: 92504965257376702}
   - component: {fileID: 114012063692132780}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: OTS Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,7 +323,7 @@ GameObject:
   - component: {fileID: 4435391210394392}
   - component: {fileID: 33489304436187496}
   - component: {fileID: 23269868030279144}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Arm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -340,7 +340,7 @@ GameObject:
   - component: {fileID: 4938218186251474}
   - component: {fileID: 33592225113712874}
   - component: {fileID: 23146671548357834}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Visor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -357,7 +357,7 @@ GameObject:
   - component: {fileID: 4858634587490486}
   - component: {fileID: 33592571742159662}
   - component: {fileID: 23005483650354612}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Held Snowball
   m_TagString: Snowball
   m_Icon: {fileID: 0}
@@ -374,7 +374,7 @@ GameObject:
   - component: {fileID: 4734249703043360}
   - component: {fileID: 33452645987627060}
   - component: {fileID: 23316569021234766}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Sprint
   m_TagString: Untagged
   m_Icon: {fileID: 0}

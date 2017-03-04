@@ -52,7 +52,19 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 	}
 
 	public void returnToBase() {
+		// TODO: Turn flag gravity off
 		dropFromHolder();
 		setPosition(basePosition);
+	}
+
+	void OnCollisionEnter(Collision collision) {
+		Debug.Log("Something hit the flag!");
+		Player player = collision.gameObject.GetComponent<Player>();
+		if (player != null) {
+			Debug.Log("collided with Player");
+			Collider collider = GetComponent<Collider>();
+			Physics.IgnoreCollision(collider, collision.collider);
+			return;
+		}
 	}
 }

@@ -748,6 +748,9 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		else {
 			heldFlag = flag;
 			flag.holder = this;
+
+			// TODO: Turn flag gravity off
+
 			flag.transform.SetParent(transform);
 			flag.transform.localPosition = standArmGO.transform.localPosition;
 		}
@@ -790,6 +793,17 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		}
 	}
 
+	void OnCollisionEnter(Collision collision) {
+		Debug.Log("We hit something!");
+		Flag flag = collision.gameObject.GetComponent<Flag>();
+		if (flag != null) {
+			Debug.Log("collided with Flag");
+			Collider collider = GetComponent<Collider>();
+			Physics.IgnoreCollision(collider, collision.collider);
+			return;
+		}
+	}
+
 	/*****************************
 	 * Shovel / Inventory
      *****************************/
@@ -801,6 +815,10 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		}
 		else {
 			shovelGO.SetActive(false);
+		}
+
+		if (hasFlag() && Input.GetButtonDown("Action")) {
+			// Throw flag
 		}
 	}
 }
