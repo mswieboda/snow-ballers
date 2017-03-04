@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameMode : MonoBehaviour {
-	public virtual void StartGameMode() {
-	}
+public interface GameMode {
+	GameObject gameObject { get; }
+	bool inProgress { get; set; }
+	bool isDone { get; set; }
 
-	public virtual void displayScoreboard() {
-	}
+	void StartGameMode();
+	void displayScoreboard();
 }

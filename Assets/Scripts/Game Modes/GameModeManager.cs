@@ -3,21 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameModeManager : MonoBehaviour {
-	public GameMode defaultGameMode;
-	public GameMode captureTheFlag;
+	private GameMode defaultGameMode;
 	public Canvas canvasMenu;
 
 	private GameMode currentGameMode;
 	private MainMenuScript menuScript;
 
-	// Use this for initialization
-	void Start () {
-		switchGameMode(null);
+	void Awake () {
+		defaultGameMode = transform.GetComponentInChildren<GameMode>();
+		currentGameMode = defaultGameMode;
+		switchGameMode(defaultGameMode);
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.F1)) {
+		if (currentGameMode.isDone) {
+			switchGameMode(defaultGameMode);
+
+			// Reset player colors
+			NetworkedPlayerController [] players = GameObject.FindObjectsOfType<NetworkedPlayerController>();
+
+			foreach (NetworkedPlayerController player in players) {
+				player.OnStartLocalPlayer();
+			}
+		}
+
+		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
 			showMenu();
 		}
 	}

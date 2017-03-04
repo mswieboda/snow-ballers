@@ -4,11 +4,19 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-public class CaptureTheFlag : GameMode {
+public class CaptureTheFlag : MonoBehaviour, GameMode {
+	public int scoreToWin = 3;
+
 	private Team [] teams;
 	private Text scoreText;
 
-	public override void StartGameMode () {
+	public bool inProgress { get; set; }
+	public bool isDone { get; set; }
+
+	public void StartGameMode () {
+		isDone = false;
+		inProgress = true;
+
 		teams = transform.GetComponentsInChildren<Team>();
 		List<Player> players = new List<Player>();
 
@@ -66,7 +74,7 @@ public class CaptureTheFlag : GameMode {
 		Debug.Log("GO GO GO!");
 	}
 
-	public override void displayScoreboard() {
+	public void displayScoreboard() {
 		foreach (Team team in teams) {
 			Canvas scoreboard = team.GetComponentInChildren<Canvas>();
 			RectTransform panel = scoreboard.GetComponentInChildren<RectTransform>();
@@ -74,6 +82,31 @@ public class CaptureTheFlag : GameMode {
 
 			text.text = team.getScore().ToString();
 		}
+
+		checkWinCondition();
+	}
+
+	public void checkWinCondition() {
+		foreach (Team team in teams) {
+			if (team.getScore() >= scoreToWin) {
+				displayWin(team);
+			}
+		}
+	}
+
+	public void displayWin(Team team) {
+		inProgress = false;
+
+		Debug.Log(team.name + " wins!!!");
+
+		StartCoroutine(endGame(3f));
+	}
+
+	// every 2 seconds perform the print()
+	private IEnumerator endGame(float waitTime) {
+		yield return new WaitForSeconds(waitTime);
+
+		isDone = true;
 	}
 }
 
