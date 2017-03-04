@@ -43,8 +43,10 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 	}
 
 	public void dropFromHolder() {
-		holder.heldFlag = null;
-		holder = null;
+		if (holder != null) {
+			holder.heldFlag = null;
+			holder = null;
+		}
 
 		transform.SetParent(team.transform);
 	}

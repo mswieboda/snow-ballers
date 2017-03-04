@@ -25,6 +25,11 @@ public class SnowballController : NetworkBehaviour {
 		// Attach to collision object
 		splat.transform.SetParent(collision.transform);
 
+		Player player = collision.gameObject.GetComponent<Player>();
+		if (player != null) {
+			player.hitBySnowball();
+		}
+
 		destroy();
 	}
 

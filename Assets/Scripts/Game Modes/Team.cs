@@ -33,10 +33,18 @@ public class Team : MonoBehaviour {
 		for (int i = 0; i < players.Count; i++) {
 			Player player = players[i];
 			int startIndex = i % startPositions.Length;
-			NetworkStartPosition startPostion = startPositions[startIndex];
+			NetworkStartPosition startPosition = startPositions[startIndex];
 
-			player.setPosition(startPostion.transform.position);
+			player.setPosition(startPosition.transform.position);
 		}
+	}
+
+	public void respawnPlayer(Player player) {
+		int index = Random.Range(0, players.Count - 1);
+
+		NetworkStartPosition startPosition = startPositions[index];
+
+		player.setPosition(startPosition.transform.position);
 	}
 
 	public void addScore(int num) {

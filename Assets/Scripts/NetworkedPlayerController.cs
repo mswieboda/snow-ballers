@@ -753,26 +753,36 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 		}
 	}
 
-	/*****************************
-	 * Shovel / Inventory
-     *****************************/
+	public void hitBySnowball() {
+		if (hasFlag()) {
+			Flag flag = heldFlag;
+			Vector3 flagPosition = flag.transform.position;
+			team.respawnPlayer(this);
+			flag.dropFromHolder();
+			flag.transform.position = flagPosition;
+		}
+	}
 
-	private void OnTriggerEnter(Collider item) {
-		if (item.gameObject.CompareTag("Pick Up")) {
-			item.gameObject.SetActive(false);
+	private void OnTriggerEnter(Collider collision) {
+		if (collision.gameObject.CompareTag("Pick Up")) {
+			collision.gameObject.SetActive(false);
 			hasShovel = true;
 		}
 			
-		Flag flag = item.gameObject.GetComponent<Flag>();
+		Flag flag = collision.gameObject.GetComponent<Flag>();
 		if (flag != null) {
 			pickUp(flag);
 		}
 
-		FlagTrigger flagTrigger = item.gameObject.GetComponent<FlagTrigger>();
+		FlagTrigger flagTrigger = collision.gameObject.GetComponent<FlagTrigger>();
 		if (flagTrigger != null) {
 			flagTrigger.triggeredBy(this);
 		}
 	}
+
+	/*****************************
+	 * Shovel / Inventory
+     *****************************/
 
 	private void useItem() {
 		//use a shovel.

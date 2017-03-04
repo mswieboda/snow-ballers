@@ -78,4 +78,7 @@ public class EnemyController : NetworkBehaviour, Player {
 
 	public void pickUp(Flag flag) {
 	}
+
+	public void hitBySnowball() {
+	}
 }

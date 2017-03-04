@@ -6,4 +6,5 @@ public interface CaptureTheFlaggable {
 	Flag heldFlag { get; set; }
 	void pickUp(Flag flag);
 	bool hasFlag();
+	void hitBySnowball();
 }

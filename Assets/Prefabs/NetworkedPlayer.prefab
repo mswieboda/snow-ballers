@@ -76,7 +76,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4993669313391922}
   - component: {fileID: 33539343489881772}
-  - component: {fileID: 65291590613432020}
   - component: {fileID: 23248328330029026}
   m_Layer: 0
   m_Name: Visor
@@ -166,7 +165,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4786385322209614}
   - component: {fileID: 33125312908360540}
-  - component: {fileID: 65297244309416906}
   - component: {fileID: 23872506865298968}
   m_Layer: 0
   m_Name: Visor
@@ -184,7 +182,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4572877510318394}
   - component: {fileID: 33061866388652500}
-  - component: {fileID: 65507778578733522}
   - component: {fileID: 23790512509227252}
   m_Layer: 0
   m_Name: Visor
@@ -221,7 +218,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4571858936220468}
   - component: {fileID: 33553356306992658}
-  - component: {fileID: 136846369898101670}
   - component: {fileID: 23018782242666870}
   m_Layer: 0
   m_Name: Crouch
@@ -343,7 +339,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4938218186251474}
   - component: {fileID: 33592225113712874}
-  - component: {fileID: 65258824819647056}
   - component: {fileID: 23146671548357834}
   m_Layer: 0
   m_Name: Visor
@@ -559,7 +554,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1571407468730558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.13, z: 0}
+  m_LocalPosition: {x: 2.933, y: 4.01, z: 3.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4615571260387642}
@@ -1438,54 +1433,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &65258824819647056
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1882430209938732}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65291590613432020
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1201502385700296}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65297244309416906
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1481111410817072}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!65 &65507778578733522
-BoxCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1487117404423568}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!65 &65620203700668806
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -1716,19 +1663,6 @@ Behaviour:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1851199579519916}
   m_Enabled: 1
---- !u!136 &136846369898101670
-CapsuleCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1648400914560978}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!143 &143810320614943256
 CharacterController:
   m_ObjectHideFlags: 1
