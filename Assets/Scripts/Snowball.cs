@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class SnowballController : NetworkBehaviour {
+public class Snowball : NetworkBehaviour {
 	public GameObject splattedSnowballPrefab;
 
 	void OnCollisionEnter(Collision collision) {

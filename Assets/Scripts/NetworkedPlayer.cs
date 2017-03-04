@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class NetworkedPlayerController : NetworkBehaviour, Player {
+public class NetworkedPlayer : NetworkBehaviour, Player {
 	public Camera mainCamera;
 
 	public GameObject standGO;
@@ -755,12 +755,22 @@ public class NetworkedPlayerController : NetworkBehaviour, Player {
 
 	public void hitBySnowball() {
 		if (hasFlag()) {
-			Flag flag = heldFlag;
-			Vector3 flagPosition = flag.transform.position;
-			team.respawnPlayer(this);
-			flag.dropFromHolder();
-			flag.transform.position = flagPosition;
+			CmdHitBySnowball();
 		}
+	}
+
+	[Command]
+	public void CmdHitBySnowball() {
+		RpcHitBySnowball();
+	}
+
+	[ClientRpc]
+	public void RpcHitBySnowball() {
+		Flag flag = heldFlag;
+		Vector3 flagPosition = flag.transform.position;
+		team.respawnPlayer(this);
+		flag.dropFromHolder();
+		flag.transform.position = flagPosition;
 	}
 
 	private void OnTriggerEnter(Collider collision) {

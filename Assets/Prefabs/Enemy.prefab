@@ -264,10 +264,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1241523136620198}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd2ac2e0a3a864f76a2e607da8c4154d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e92beab27268468c9c9c04b09aed28a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strafeSpeed: 3
+  strafeSpeed: 1
   timeToMove: 1.5
 --- !u!114 &114403645907061990
 MonoBehaviour:

@@ -21,8 +21,8 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 
 		List<Player> players = new List<Player>();
 
-		players.AddRange(GameObject.FindObjectsOfType<NetworkedPlayerController>());
-		players.AddRange(GameObject.FindObjectsOfType<EnemyController>());
+		players.AddRange(GameObject.FindObjectsOfType<NetworkedPlayer>());
+		players.AddRange(GameObject.FindObjectsOfType<BotPlayer>());
 
 		// Add flags
 		foreach (Team team in teams) {

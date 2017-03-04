@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SplattedSnowballController : MonoBehaviour {
+public class SnowballSplat : MonoBehaviour {
 
 	public int maxSplats = 100;
 

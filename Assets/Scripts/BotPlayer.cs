@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class EnemyController : NetworkBehaviour, Player {
+public class BotPlayer : NetworkBehaviour, Player {
 	public float strafeSpeed = 1f;
 	public float timeToMove = 1.5f;
 

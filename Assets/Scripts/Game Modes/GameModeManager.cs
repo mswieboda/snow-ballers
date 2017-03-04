@@ -24,9 +24,9 @@ public class GameModeManager : NetworkBehaviour {
 			CmdSwitchGameMode(defaultGameMode.gameObject.name);
 
 			// Reset player colors
-			NetworkedPlayerController [] players = GameObject.FindObjectsOfType<NetworkedPlayerController>();
+			NetworkedPlayer [] players = GameObject.FindObjectsOfType<NetworkedPlayer>();
 
-			foreach (NetworkedPlayerController player in players) {
+			foreach (NetworkedPlayer player in players) {
 				if (player.isLocalPlayer) {
 					player.OnStartLocalPlayer();
 				}

@@ -24,7 +24,7 @@ GameObject:
   - component: {fileID: 82576190469221176}
   - component: {fileID: 114473407563670728}
   m_Layer: 0
-  m_Name: Splatted Snowball
+  m_Name: Snowball Splat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1700296067557450}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52c94cf9f874c49aeadde2eb693b407c, type: 3}
+  m_Script: {fileID: 11500000, guid: 6e95403b267b34801932358df0e975dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxSplats: 500
