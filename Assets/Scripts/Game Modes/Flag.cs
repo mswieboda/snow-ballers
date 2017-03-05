@@ -7,6 +7,11 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 	public Player holder { get; set; }
 
 	private Vector3 basePosition;
+	private Rigidbody rb;
+
+	void Awake() {
+		rb = GetComponent<Rigidbody>();
+	}
 
 	private Team mTeam;
 	public Team team { 
@@ -42,6 +47,16 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 		return holder != null;
 	}
 
+	public void holdBy(Player player, Vector3 localPosition) {
+		holder = player;
+
+		clearForce();
+		disableGravity();
+
+		transform.SetParent(player.transform);
+		transform.localPosition = localPosition;
+	}
+
 	public void dropFromHolder() {
 		if (holder != null) {
 			holder.heldFlag = null;
@@ -49,22 +64,29 @@ public class Flag : MonoBehaviour, Teamable, Spawnable {
 		}
 
 		transform.SetParent(team.transform);
+		enableGravity();
+	}
+
+	public void throwFlag(Vector3 position, Vector3 force) {
+		dropFromHolder();
+		setPosition(position);
+		rb.velocity = force;
 	}
 
 	public void returnToBase() {
-		// TODO: Turn flag gravity off
 		dropFromHolder();
 		setPosition(basePosition);
 	}
 
-	void OnCollisionEnter(Collision collision) {
-		Debug.Log("Something hit the flag!");
-		Player player = collision.gameObject.GetComponent<Player>();
-		if (player != null) {
-			Debug.Log("collided with Player");
-			Collider collider = GetComponent<Collider>();
-			Physics.IgnoreCollision(collider, collision.collider);
-			return;
-		}
+	public void disableGravity() {
+		rb.useGravity = false;
+	}
+
+	public void enableGravity() {
+		rb.useGravity = true;
+	}
+
+	public void clearForce() {
+		rb.velocity = Vector3.zero;
 	}
 }

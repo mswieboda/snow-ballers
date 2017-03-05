@@ -35,6 +35,7 @@ public class Team : MonoBehaviour {
 			int startIndex = i % startPositions.Length;
 			NetworkStartPosition startPosition = startPositions[startIndex];
 
+			player.transform.rotation = startPosition.transform.rotation;
 			player.setPosition(startPosition.transform.position);
 		}
 	}
@@ -44,6 +45,7 @@ public class Team : MonoBehaviour {
 
 		NetworkStartPosition startPosition = startPositions[index];
 
+		player.transform.rotation = startPosition.transform.rotation;
 		player.setPosition(startPosition.transform.position);
 	}
 
