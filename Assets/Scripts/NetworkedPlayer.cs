@@ -69,6 +69,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	public float throwStaminaAmount = 10;
 	public float gainStaminaAmount = 1;
 
+	private GameModeManager gameModeManager;
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float verticalVelocity = 0;
@@ -103,6 +104,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 		setupGOs();
 
+		gameModeManager = GameObject.FindObjectOfType<GameModeManager>();
 		characterController = GetComponent<CharacterController>();
 		movementVector = new Vector3();
 
@@ -111,6 +113,12 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 	void Update() {
 		if (!isLocalPlayer) {
+			return;
+		}
+
+		showCamera();
+
+		if (!gameModeManager.gameInProgress()) {
 			return;
 		}
 
@@ -125,8 +133,6 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		crouch();
 
 		gainStamina();
-
-		showCamera();
 	}
 
 	private void setupGOs() {

@@ -10,16 +10,17 @@ public class GameModeManager : NetworkBehaviour {
 	private GameMode currentGameMode;
 	private MainMenuScript menuScript;
 
-	void Awake () {
+	void Awake() {
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
-
-		if (isServer) {
-			RpcSwitchGameMode(defaultGameMode.gameObject.name);
-		}
+		
+//		if (isServer) {
+//			CmdSwitchGameMode(defaultGameMode.gameObject.name);
+//		}
+		currentGameMode.StartGameMode();
 	}
 
-	void Update () {
+	void Update() {
 		if (currentGameMode.isDone) {
 			CmdSwitchGameMode(defaultGameMode.gameObject.name);
 
@@ -37,6 +38,10 @@ public class GameModeManager : NetworkBehaviour {
 		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
 			CmdShowMenu();
 		}
+	}
+
+	public bool gameInProgress() {
+		return currentGameMode == defaultGameMode || (currentGameMode.inProgress || currentGameMode.isDone);
 	}
 
 	[Command]

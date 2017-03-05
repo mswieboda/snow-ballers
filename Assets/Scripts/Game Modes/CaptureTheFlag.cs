@@ -13,10 +13,11 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 	public bool inProgress { get; set; }
 	public bool isDone { get; set; }
 
-	public void StartGameMode () {
-		isDone = false;
-		inProgress = true;
+	void Awake() {
+		isDone = inProgress = false;
+	}
 
+	public void StartGameMode () {
 		teams = transform.GetComponentsInChildren<Team>();
 
 		List<Player> players = new List<Player>();
@@ -43,6 +44,14 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		}
 
 		// start game timer
+		StartCoroutine(startGame(3f));
+	}
+
+	private IEnumerator startGame(float waitTime) {
+		yield return new WaitForSeconds(waitTime);
+
+		inProgress = true;
+
 		Debug.Log("GO GO GO!");
 	}
 
@@ -67,17 +76,15 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 	}
 
 	public void displayWin(Team team) {
-		inProgress = false;
-
 		Debug.Log(team.name + " wins!!!");
 
 		StartCoroutine(endGame(3f));
 	}
 
-	// every 2 seconds perform the print()
 	private IEnumerator endGame(float waitTime) {
 		yield return new WaitForSeconds(waitTime);
 
+		inProgress = false;
 		isDone = true;
 	}
 
