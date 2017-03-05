@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class CaptureTheFlag : MonoBehaviour, GameMode {
 	public int scoreToWin = 3;
+	public int startTimer = 3;
 
 	private Team [] teams;
 	private Text scoreText;
@@ -44,15 +45,25 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		}
 
 		// start game timer
-		StartCoroutine(startGame(3f));
+		startGame();
 	}
 
-	private IEnumerator startGame(float waitTime) {
-		yield return new WaitForSeconds(waitTime);
+	private void startGame() {
+		StartCoroutine(countdown(startTimer));
+	}
 
-		inProgress = true;
+	private IEnumerator countdown(int secondsLeft) {
+		Debug.Log(secondsLeft.ToString());
 
-		Debug.Log("GO GO GO!");
+		yield return new WaitForSeconds(1f);
+
+		if (secondsLeft <= 1) {
+			inProgress = true;
+			Debug.Log("GO GO GO!");
+			yield break;
+		}
+
+		StartCoroutine(countdown(secondsLeft - 1));
 	}
 
 	public void displayScoreboard() {
