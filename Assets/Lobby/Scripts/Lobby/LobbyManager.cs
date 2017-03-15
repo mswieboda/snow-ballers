@@ -21,8 +21,6 @@ namespace Prototype.NetworkLobby
 
         [Space]
         [Header("UI Reference")]
-        public LobbyTopPanel topPanel;
-
         public RectTransform mainMenuPanel;
         public RectTransform lobbyPanel;
 
@@ -46,6 +44,8 @@ namespace Prototype.NetworkLobby
 
 		protected Canvas _canvas;
 
+		protected bool isInGame = false;
+
         void Awake()
         {
 			if (s_Singleton == null) {
@@ -68,8 +68,9 @@ namespace Prototype.NetworkLobby
         {
             if (SceneManager.GetSceneAt(0).name == lobbyScene)
             {
-                if (topPanel.isInGame)
+                if (isInGame)
                 {
+					ShowLobbyManager();
                     ChangeTo(lobbyPanel);
                     
 					if (conn.playerControllers[0].unetView.isServer)
@@ -86,14 +87,12 @@ namespace Prototype.NetworkLobby
                     ChangeTo(mainMenuPanel);
                 }
 
-                topPanel.ToggleVisibility(true);
-                topPanel.isInGame = false;
+                isInGame = false;
             }
             else
             {
-				ChangeTo(null);
-				topPanel.ToggleVisibility(false);
-                topPanel.isInGame = true;
+				HideLobbyManager();
+                isInGame = true;
             }
         }
 
@@ -140,7 +139,7 @@ namespace Prototype.NetworkLobby
         public void GoBackButton()
         {
             backDelegate();
-			topPanel.isInGame = false;
+			isInGame = false;
         }
 
         // ----------------- Server management
