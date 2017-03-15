@@ -20,4 +20,4 @@ Left Alt/Mouse Left Click (Aim) - Click and hold to switch to Over The Shoulder 
 
 C Key/Left ⌘ Command (Mac only) (Crouch) - Toggle crouch
 
-TEMPORARY: Pressing "escape" quits the application
+Esc - For host, shows lobby to kick players or disconnect (client cannot see lobby) TEMP - lots of work to do

@@ -95,22 +95,6 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	//hasShovel may be temporary. May switch to array or List<>()
 	private bool hasShovel = false;
 
-	void Start() {
-		if (!isLocalPlayer) {
-			mainCamera.gameObject.SetActive(false);
-
-			return;
-		}
-
-		setupGOs();
-
-		gameModeManager = GameObject.FindObjectOfType<GameModeManager>();
-		characterController = GetComponent<CharacterController>();
-		movementVector = new Vector3();
-
-		stamina = maxStamina;
-	}
-
 	void Update() {
 		if (!isLocalPlayer) {
 			return;
@@ -146,6 +130,14 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	 * Networking
 	 *****************************/
 	public override void OnStartLocalPlayer() {
+		setupGOs();
+
+		gameModeManager = GameObject.FindObjectOfType<GameModeManager>();
+		characterController = GetComponent<CharacterController>();
+		movementVector = new Vector3();
+
+		stamina = maxStamina;
+
 		changeColor(Color.green);
 
 		// Enable cameras
@@ -159,6 +151,8 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		foreach(Camera camera in cameras) {
 			camera.enabled = true;
 		}
+
+		displaySnowballs();
 	}
 
 	/*****************************

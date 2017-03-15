@@ -11,7 +11,7 @@ public class MenuScript : MonoBehaviour {
 
 	void Update () {
 		if (Input.GetButtonDown("Menu")) {
-			SceneManager.LoadScene(0);
+			Prototype.NetworkLobby.LobbyManager.s_Singleton.ServerChangeScene("Main Menu");
 		}
 	}
 }
