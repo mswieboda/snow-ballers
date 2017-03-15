@@ -13,10 +13,7 @@ public class GameModeManager : NetworkBehaviour {
 	void Awake() {
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
-		
-//		if (isServer) {
-//			CmdSwitchGameMode(defaultGameMode.gameObject.name);
-//		}
+
 		currentGameMode.StartGameMode();
 	}
 
@@ -36,7 +33,7 @@ public class GameModeManager : NetworkBehaviour {
 
 		// Note: only works on HOST for now because of Player/Client Authority
 		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
-			CmdShowMenu();
+			showMenu();
 		}
 	}
 
@@ -44,29 +41,13 @@ public class GameModeManager : NetworkBehaviour {
 		return currentGameMode == defaultGameMode || (currentGameMode.inProgress || currentGameMode.isDone);
 	}
 
-	[Command]
-	public void CmdShowMenu() {
-		RpcShowMenu();
-	}
-
-	[ClientRpc]
-	public void RpcShowMenu() {
-		canvasMenu.gameObject.SetActive(true);
+	public void showMenu() {
+		canvasMenu.enabled = true;
 		canvasMenu.GetComponent<MainMenuScript>().enableCursor();
 	}
 
-	[Command]
-	public void CmdHideMenu() {
-		RpcHideMenu();
-	}
-
-	[ClientRpc]
-	public void RpcHideMenu() {
-		hideMenu();
-	}
-
 	public void hideMenu() {
-		canvasMenu.gameObject.SetActive(false);
+		canvasMenu.enabled = false;
 		canvasMenu.GetComponent<MainMenuScript>().disableCursor();
 	}
 

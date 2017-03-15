@@ -5,16 +5,25 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class CaptureTheFlag : MonoBehaviour, GameMode {
+	public GameModeManager _gameModeManager;
+	public GameModeManager gameModeManager { get { return _gameModeManager; } }
+
 	public int scoreToWin = 3;
 	public int startTimer = 3;
 
 	private Team [] teams;
-	private Text scoreText;
 
 	public bool inProgress { get; set; }
 	public bool isDone { get; set; }
 
+	private Canvas countdown;
+	private Text countdownText;
+
 	void Awake() {
+		countdown = GetComponentInChildren<Canvas>();
+		countdownText = countdown.GetComponentInChildren<Text>();
+		countdown.enabled = false;
+
 		isDone = inProgress = false;
 	}
 
@@ -49,21 +58,28 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 	}
 
 	private void startGame() {
-		StartCoroutine(countdown(startTimer));
+		countdown.enabled = true;
+		StartCoroutine(countdownCoroutine(startTimer));
 	}
 
-	private IEnumerator countdown(int secondsLeft) {
-		Debug.Log(secondsLeft.ToString());
-
-		yield return new WaitForSeconds(1f);
-
-		if (secondsLeft <= 1) {
+	private IEnumerator countdownCoroutine(int secondsLeft) {
+		if (secondsLeft > 0) {
+			countdownText.text = secondsLeft.ToString();
+		}
+		else if (secondsLeft == 0) {
 			inProgress = true;
-			Debug.Log("GO GO GO!");
+
+			countdownText.text = "GO GO GO!";
+		}
+		else {
+			countdown.enabled = false;
+
 			yield break;
 		}
 
-		StartCoroutine(countdown(secondsLeft - 1));
+		yield return new WaitForSeconds(1f);
+
+		StartCoroutine(countdownCoroutine(secondsLeft - 1));
 	}
 
 	public void displayScoreboard() {
