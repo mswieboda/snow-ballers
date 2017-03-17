@@ -69,7 +69,6 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	public float throwStaminaAmount = 10;
 	public float gainStaminaAmount = 1;
 
-	private GameModeManager gameModeManager;
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float verticalVelocity = 0;
@@ -102,7 +101,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 		showCamera();
 
-		if (!gameModeManager.gameInProgress()) {
+		if (!GameModeManager.singleton.gameInProgress()) {
 			return;
 		}
 
@@ -130,9 +129,9 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	 * Networking
 	 *****************************/
 	public override void OnStartLocalPlayer() {
+		Debug.Log("NetworkedPlayer OnStartLocalPlayer() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
 		setupGOs();
 
-		gameModeManager = GameObject.FindObjectOfType<GameModeManager>();
 		characterController = GetComponent<CharacterController>();
 		movementVector = new Vector3();
 
@@ -153,6 +152,14 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		}
 
 		displaySnowballs();
+
+		CmdOnPlayerSceneLoaded();
+	}
+
+	[Command]
+	public void CmdOnPlayerSceneLoaded() {
+		Debug.Log("NetworkedPlayer CmdOnPlayerSceneLoaded() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
+		GameModeManager.singleton.OnPlayerSceneLoaded();
 	}
 
 	/*****************************
@@ -766,10 +773,13 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	[ClientRpc]
 	public void RpcHitBySnowball() {
 		Flag flag = heldFlag;
-		Vector3 flagPosition = flag.transform.position;
-		team.respawnPlayer(this);
-		flag.dropFromHolder();
-		flag.transform.position = flagPosition;
+
+		if (flag != null) {
+			Vector3 flagPosition = flag.transform.position;
+			team.respawnPlayer(this);
+			flag.dropFromHolder();
+			flag.transform.position = flagPosition;
+		}
 	}
 
 	private void OnTriggerEnter(Collider collision) {

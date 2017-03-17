@@ -4,63 +4,46 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class GameModeManager : NetworkBehaviour {
+	public static GameModeManager singleton;
+
 	private GameMode defaultGameMode;
 	public Canvas canvasMenu;
 
 	private GameMode currentGameMode;
 	private MainMenuScript menuScript;
 
+	protected int playersSceneLoaded = 0;
+
 	void Awake() {
+		singleton = this;
+
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
-
-		currentGameMode.StartGameMode();
-	}
-
-	void Update() {
-		if (currentGameMode.isDone) {
-			CmdSwitchGameMode(defaultGameMode.gameObject.name);
-
-			// Reset player colors
-			NetworkedPlayer [] players = GameObject.FindObjectsOfType<NetworkedPlayer>();
-
-			foreach (NetworkedPlayer player in players) {
-				if (player.isLocalPlayer) {
-					player.OnStartLocalPlayer();
-				}
-			}
-		}
-
-		// Note: only works on HOST for now because of Player/Client Authority
-		if (!currentGameMode.inProgress && Input.GetKeyDown(KeyCode.F1)) {
-			showMenu();
-		}
 	}
 
 	public bool gameInProgress() {
 		return currentGameMode == defaultGameMode || (currentGameMode.inProgress || currentGameMode.isDone);
 	}
 
-	public void showMenu() {
-		canvasMenu.enabled = true;
-		canvasMenu.GetComponent<MainMenuScript>().enableCursor();
-	}
-
-	public void hideMenu() {
-		canvasMenu.enabled = false;
-		canvasMenu.GetComponent<MainMenuScript>().disableCursor();
-	}
-
-	[Command]
-	public void CmdSwitchGameMode(string gameModeName) {
-		RpcSwitchGameMode(gameModeName);
+	[Client]
+	private void startGame() {
+		Debug.Log("GameModeManager startGame()");
+		Debug.Log("GameModeManager startGame() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
+		switchGameMode(Prototype.NetworkLobby.LobbyPlayerList._instance.gameModeName);
+		currentGameMode.StartGameMode();
 	}
 
 	[ClientRpc]
-	public void RpcSwitchGameMode(string gameModeName) {
+	private void RpcStartGame() {
+		Debug.Log("GameModeManager RpcStartGame()");
+		startGame();
+	}
+
+	[Client]
+	void switchGameMode(string gameModeName) {
+		Debug.Log("GameModeManager switchGameMode(" + gameModeName + ")");
 		GameMode gameMode = null;
 		Transform gameModeTransform = transform.FindChild(gameModeName);
-
 
 		if (gameModeTransform != null) {
 			gameMode = gameModeTransform.GetComponent<GameMode>();
@@ -72,12 +55,31 @@ public class GameModeManager : NetworkBehaviour {
 			currentGameMode = gameMode;
 		}
 		else {
+			Debug.Log("Game mode \"" + gameModeName + "\" doesn't exist, loading default game mode");
 			currentGameMode = defaultGameMode;
 		}
 
-		hideMenu();
-
 		currentGameMode.gameObject.SetActive(true);
-		currentGameMode.StartGameMode();
+	}
+
+	public void OnPlayerSceneLoaded() {
+		int numPlayers = Prototype.NetworkLobby.LobbyManager.s_Singleton.numPlayers;
+		NetworkServer.Spawn(this.gameObject);
+		playersSceneLoaded++;
+		Debug.Log("GameModeManager OnPlayerSceneLoaded() numPlayers: " + numPlayers + " playersSceneLoaded: " + playersSceneLoaded);
+		if (playersSceneLoaded >= numPlayers) {
+			Debug.Log("GameModeManager OnPlayerSceneLoaded() all players ready!");
+			Debug.Log("GameModeManager OnPlayerSceneLoaded() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
+
+			if (isServer && isClient) {
+				// TODO: shouldn't be necessary, but for some reason
+				// when host and client, with no other clients 
+				// this class can't call an RPC function!?!
+				startGame();
+			}
+			else {
+				RpcStartGame();
+			}
+		}
 	}
 }

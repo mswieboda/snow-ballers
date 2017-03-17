@@ -14,6 +14,8 @@ namespace Prototype.NetworkLobby
         public GameObject warningDirectPlayServer;
         public Transform addButtonRow;
 
+		public string gameModeName { get; set; }
+
         protected VerticalLayoutGroup _layout;
         protected List<LobbyPlayer> _players = new List<LobbyPlayer>();
 
@@ -21,6 +23,8 @@ namespace Prototype.NetworkLobby
         {
             _instance = this;
             _layout = playerListContentTransform.GetComponent<VerticalLayoutGroup>();
+
+			gameModeName = "CaptureTheFlag";
         }
 
         public void DisplayDirectServerWarning(bool enabled)
