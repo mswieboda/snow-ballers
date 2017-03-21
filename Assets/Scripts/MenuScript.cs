@@ -8,10 +8,4 @@ public class MenuScript : MonoBehaviour {
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
 	}
-
-	void Update () {
-		if (Input.GetButtonDown("Menu")) {
-			Prototype.NetworkLobby.LobbyManager.s_Singleton.ServerChangeScene("Main Menu");
-		}
-	}
 }

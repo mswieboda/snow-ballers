@@ -5,10 +5,12 @@ using UnityEngine.Networking;
 
 public class GameModeManager : NetworkBehaviour {
 	public static GameModeManager singleton;
-
-	private GameMode defaultGameMode;
+	
 	public Canvas canvasMenu;
 
+	public int playersInGame = 2;
+
+	private GameMode defaultGameMode;
 	private GameMode currentGameMode;
 	private MainMenuScript menuScript;
 
@@ -26,11 +28,22 @@ public class GameModeManager : NetworkBehaviour {
 	}
 
 	[Client]
-	private void startGame() {
+	public void stopGame() {
+		currentGameMode.stopGameMode();
+	}
+
+	[Client]
+	public void startGame() {
+		if (currentGameMode.inProgress || !currentGameMode.isDone) {
+			stopGame();
+		}
+
 		Debug.Log("GameModeManager startGame()");
 		Debug.Log("GameModeManager startGame() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
-		switchGameMode(Prototype.NetworkLobby.LobbyPlayerList._instance.gameModeName);
-		currentGameMode.StartGameMode();
+
+		// TODO: Temporary, will come from lobby when implemented
+		switchGameMode("CaptureTheFlag");
+		currentGameMode.startGameMode();
 	}
 
 	[ClientRpc]
@@ -63,7 +76,12 @@ public class GameModeManager : NetworkBehaviour {
 	}
 
 	public void OnPlayerSceneLoaded() {
-		int numPlayers = Prototype.NetworkLobby.LobbyManager.s_Singleton.numPlayers;
+		// TODO: Temporary, will come from lobby when implemented
+		//       This will be later customized to be the size of the lobby, when all players are ready
+		//       and have loaded the scene, then the game starts for all at the same time.
+		//       For now this is hardcoded as lobby isn't implemented yet.
+		int numPlayers = playersInGame;
+
 		NetworkServer.Spawn(this.gameObject);
 		playersSceneLoaded++;
 		Debug.Log("GameModeManager OnPlayerSceneLoaded() numPlayers: " + numPlayers + " playersSceneLoaded: " + playersSceneLoaded);
@@ -71,15 +89,7 @@ public class GameModeManager : NetworkBehaviour {
 			Debug.Log("GameModeManager OnPlayerSceneLoaded() all players ready!");
 			Debug.Log("GameModeManager OnPlayerSceneLoaded() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
 
-			if (isServer && isClient) {
-				// TODO: shouldn't be necessary, but for some reason
-				// when host and client, with no other clients 
-				// this class can't call an RPC function!?!
-				startGame();
-			}
-			else {
-				RpcStartGame();
-			}
+			RpcStartGame();
 		}
 	}
 }

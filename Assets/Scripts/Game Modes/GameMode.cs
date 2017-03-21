@@ -8,6 +8,7 @@ public interface GameMode {
 	bool inProgress { get; set; }
 	bool isDone { get; set; }
 
-	void StartGameMode();
+	void startGameMode();
+	void stopGameMode();
 	void displayScoreboard();
 }

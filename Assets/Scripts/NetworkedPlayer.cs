@@ -115,6 +115,8 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 		crouch();
 
+		startGameMode();
+
 		gainStamina();
 	}
 
@@ -160,6 +162,12 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	public void CmdOnPlayerSceneLoaded() {
 		Debug.Log("NetworkedPlayer CmdOnPlayerSceneLoaded() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
 		GameModeManager.singleton.OnPlayerSceneLoaded();
+	}
+
+	private void startGameMode() {
+		if (isServer && isClient && Input.GetButtonDown("Menu")) {
+			GameModeManager.singleton.startGame();
+		}
 	}
 
 	/*****************************

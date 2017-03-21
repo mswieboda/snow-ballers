@@ -460,7 +460,8 @@ PlayerSettings:
   XboxOneAllowedProductIds: []
   XboxOnePersistentLocalStorageSize: 0
   vrEditorSettings: {}
-  cloudServicesEnabled: {}
+  cloudServicesEnabled:
+    UNet: 1
   cloudProjectId: 98af0e99-d18f-4b6b-ad68-5e64f8b3c62c
   projectName: Snow Ballers
   organizationId: suckerformayhem

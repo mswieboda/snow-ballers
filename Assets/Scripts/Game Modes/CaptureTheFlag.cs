@@ -27,7 +27,7 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		isDone = inProgress = false;
 	}
 
-	public void StartGameMode () {
+	public void startGameMode () {
 		teams = transform.GetComponentsInChildren<Team>();
 
 		List<Player> players = new List<Player>();
@@ -53,8 +53,12 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 			team.spawnPlayers();
 		}
 
-		// start game timer
 		startGame();
+	}
+
+	public void stopGameMode() {
+		inProgress = false;
+		isDone = true;
 	}
 
 	private void startGame() {
@@ -111,8 +115,7 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 	private IEnumerator endGame(float waitTime) {
 		yield return new WaitForSeconds(waitTime);
 
-		inProgress = false;
-		isDone = true;
+		stopGameMode();
 	}
 
 	// Assigns teams round robin style
