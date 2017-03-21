@@ -6,17 +6,15 @@ using UnityEngine.Networking;
 public class Demo : MonoBehaviour, GameMode {
 	public GameModeManager _gameModeManager;
 	public GameModeManager gameModeManager { get { return _gameModeManager; } }
-	public bool inProgress { get; set; }
-	public bool isDone { get; set; }
+	public bool inProgress { get { return mInProgress; } }
+	private bool mInProgress;
 
 	public void startGameMode() {
-		isDone = false;
-		inProgress = false;
+		mInProgress = true;
 	}
 
 	public void stopGameMode() {
-		isDone = true;
-		inProgress = false;
+		mInProgress = false;
 	}
 
 	public void displayScoreboard() {

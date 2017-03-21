@@ -101,7 +101,10 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 		showCamera();
 
-		if (!GameModeManager.singleton.gameInProgress()) {
+		// Note: For now host can switch game mode regardless of game progress
+		startGameMode();
+
+		if (!GameModeManager.singleton.gameInProgress) {
 			return;
 		}
 
@@ -114,8 +117,6 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		useItem();
 
 		crouch();
-
-		startGameMode();
 
 		gainStamina();
 	}

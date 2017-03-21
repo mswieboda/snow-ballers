@@ -13,18 +13,19 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 
 	private Team [] teams;
 
-	public bool inProgress { get; set; }
-	public bool isDone { get; set; }
+	public bool inProgress { get { return mInProgress; } }
 
-	private Canvas countdown;
-	private Text countdownText;
+	private bool mInProgress;
+
+	public Canvas canvas;
+	public Text infoText;
 
 	void Awake() {
-		countdown = GetComponentInChildren<Canvas>();
-		countdownText = countdown.GetComponentInChildren<Text>();
-		countdown.enabled = false;
+		canvas = GetComponentInChildren<Canvas>();
+		infoText = canvas.GetComponentInChildren<Text>();
+		canvas.enabled = false;
 
-		isDone = inProgress = false;
+		mInProgress = false;
 	}
 
 	public void startGameMode () {
@@ -57,26 +58,26 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 	}
 
 	public void stopGameMode() {
-		inProgress = false;
-		isDone = true;
+		canvas.enabled = false;
+		mInProgress = false;
 	}
 
 	private void startGame() {
-		countdown.enabled = true;
+		canvas.enabled = true;
 		StartCoroutine(countdownCoroutine(startTimer));
 	}
 
 	private IEnumerator countdownCoroutine(int secondsLeft) {
 		if (secondsLeft > 0) {
-			countdownText.text = secondsLeft.ToString();
+			infoText.text = secondsLeft.ToString();
 		}
 		else if (secondsLeft == 0) {
-			inProgress = true;
+			mInProgress = true;
 
-			countdownText.text = "GO GO GO!";
+			infoText.text = "GO GO GO!";
 		}
 		else {
-			countdown.enabled = false;
+			canvas.enabled = false;
 
 			yield break;
 		}
@@ -106,8 +107,9 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		}
 	}
 
-	public void displayWin(Team team) {
-		Debug.Log(team.name + " wins!!!");
+	public void displayWin(Team winningTeam) {
+		canvas.enabled = true;
+		infoText.text = winningTeam.name + " wins!!!";
 
 		StartCoroutine(endGame(3f));
 	}

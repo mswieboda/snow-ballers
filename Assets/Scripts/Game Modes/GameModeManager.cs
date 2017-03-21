@@ -5,8 +5,6 @@ using UnityEngine.Networking;
 
 public class GameModeManager : NetworkBehaviour {
 	public static GameModeManager singleton;
-	
-	public Canvas canvasMenu;
 
 	public int playersInGame = 2;
 
@@ -21,11 +19,10 @@ public class GameModeManager : NetworkBehaviour {
 
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
+		currentGameMode.startGameMode();
 	}
 
-	public bool gameInProgress() {
-		return currentGameMode == defaultGameMode || (currentGameMode.inProgress || currentGameMode.isDone);
-	}
+	public bool gameInProgress { get { return currentGameMode.inProgress; } }
 
 	[Client]
 	public void stopGame() {
@@ -34,7 +31,7 @@ public class GameModeManager : NetworkBehaviour {
 
 	[Client]
 	public void startGame() {
-		if (currentGameMode.inProgress || !currentGameMode.isDone) {
+		if (gameInProgress) {
 			stopGame();
 		}
 

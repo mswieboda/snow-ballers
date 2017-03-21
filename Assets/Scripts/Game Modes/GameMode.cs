@@ -5,8 +5,7 @@ using UnityEngine;
 public interface GameMode {
 	GameModeManager gameModeManager { get; }
 	GameObject gameObject { get; }
-	bool inProgress { get; set; }
-	bool isDone { get; set; }
+	bool inProgress { get; }
 
 	void startGameMode();
 	void stopGameMode();
