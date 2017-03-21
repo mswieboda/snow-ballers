@@ -10,16 +10,22 @@ public class BotPlayer : NetworkBehaviour, Player {
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float timeMoving;
-	private int direction = 0;
+	private int direction;
 
 	void Start() {
 		characterController = GetComponent<CharacterController>();
-		movementVector = new Vector3();
-		timeMoving = Time.time + Random.Range (0f, timeToMove);
+
+		spawnInitialization();
 	}
 
 	void Update() {
 		autoMove();
+	}
+
+	public void spawnInitialization() {
+		movementVector = Vector3.zero;
+		direction = 0;
+		timeMoving = Time.time + Random.Range (0f, timeToMove);
 	}
 
 	private void autoMove() {

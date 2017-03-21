@@ -94,6 +94,9 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	//hasShovel may be temporary. May switch to array or List<>()
 	private bool hasShovel = false;
 
+	private int hitPoints;
+	public int maxHitPoints = 3;
+
 	void Update() {
 		if (!isLocalPlayer) {
 			return;
@@ -131,15 +134,49 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	/*****************************
 	 * Networking
 	 *****************************/
+	public void spawnInitialization() {
+		gameObject.SetActive(true);
+
+		movementVector = Vector3.zero;
+
+		stamina = maxStamina;
+		hitPoints = maxHitPoints;
+
+		snowballs = 5;
+		isAiming = false;
+		isSprinting = false;
+		isCrouched = false;
+		isGettingSnowballs = false;
+		hasShovel = false;
+
+		standGO.SetActive(true);
+		standHeldSnowballGO.SetActive(false);
+		standOTSCamera.enabled = false;
+
+		crouchGO.SetActive(false);
+		crouchHeldSnowballGO.SetActive(false);
+		crouchOTSCamera.enabled = false;
+
+		sprintGO.SetActive(false);
+		sprintHeldSnowballGO.SetActive(false);
+		sprintOTSCamera.enabled = false;
+
+		getSnowballsGO.SetActive(false);
+
+		shovelGO.SetActive(false);
+
+		if (isLocalPlayer) {
+			displaySnowballs();
+		}
+	}
+
 	public override void OnStartLocalPlayer() {
 		Debug.Log("NetworkedPlayer OnStartLocalPlayer() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
 		setupGOs();
 
 		characterController = GetComponent<CharacterController>();
-		movementVector = new Vector3();
 
-		stamina = maxStamina;
-
+		// Note: Can be overriden by game modes
 		changeColor(Color.green);
 
 		// Enable cameras
@@ -154,7 +191,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 			camera.enabled = true;
 		}
 
-		displaySnowballs();
+		spawnInitialization();
 
 		CmdOnPlayerSceneLoaded();
 	}
@@ -769,9 +806,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	}
 
 	public void hitBySnowball() {
-		if (hasFlag()) {
-			CmdHitBySnowball();
-		}
+		CmdHitBySnowball();
 	}
 
 	[Command]
@@ -781,14 +816,67 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 	[ClientRpc]
 	public void RpcHitBySnowball() {
-		Flag flag = heldFlag;
+		hitPoints--;
 
-		if (flag != null) {
-			Vector3 flagPosition = flag.transform.position;
-			team.respawnPlayer(this);
-			flag.dropFromHolder();
-			flag.transform.position = flagPosition;
+		Debug.Log("RpcHitBySnowball() hitPoints: " + hitPoints);
+
+		if (hitPoints <= 0) {
+			if (hasFlag()) {
+				Debug.Log("RpcHitBySnowball() dropFlag");
+				Flag flag = heldFlag;
+			
+				if (flag != null) {
+					Vector3 flagPosition = flag.transform.position;
+
+					respawn();
+
+					flag.dropFromHolder();
+					flag.transform.position = flagPosition;
+				}
+			}
+
+			Debug.Log("RpcHitBySnowball() respawn");
+			respawn();
 		}
+	}
+
+	private void respawn() {
+		gameObject.SetActive(false);
+//		mainCamera.enabled = false;
+		GameModeManager.singleton.respawnPlayer(this, isLocalPlayer);
+	}
+
+	private void throwFlag() {
+		Flag flag = heldFlag;
+		Vector3 flagPosition = flag.transform.position;
+
+		float forwardForce;
+		float throwAngle = throwAngleDefault;
+		Vector3 force;
+		Quaternion rotation;
+
+		// Get rotation from Player
+		rotation = new Quaternion(
+			transform.rotation.x,
+			transform.rotation.y,
+			transform.rotation.z,
+			transform.rotation.w
+		);
+
+		// If going backwards, make the throw angle larger then normal
+		if (forwardDirection < 0) {
+			throwAngle *= 2;
+		}
+
+		// Add an upwards (negative) throwing angle
+		rotation *= Quaternion.Euler(-throwAngle, 0, 0);
+
+		// Calculate speed with new rotation, and forward/backward speed
+		forwardForce = forwardSpeed() + throwFlagForce;
+		forwardForce = Mathf.Clamp(forwardDirection * forwardSpeed() + throwFlagForce, 0, forwardForce);
+		force = rotation * new Vector3(0, 0, forwardForce);
+
+		flag.throwFlag(flagPosition, force);
 	}
 
 	private void OnTriggerEnter(Collider collision) {
@@ -822,39 +910,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		}
 
 		if (hasFlag() && Input.GetButtonDown("Action")) {
-			// Drop flag
-			Flag flag = heldFlag;
-			Vector3 flagPosition = flag.transform.position;
-//			flag.dropFromHolder();
-//			flag.transform.position = flagPosition;
-
-			float forwardForce;
-			float throwAngle = throwAngleDefault;
-			Vector3 force;
-			Quaternion rotation;
-
-			// Get rotation from Player
-			rotation = new Quaternion(
-				transform.rotation.x,
-				transform.rotation.y,
-				transform.rotation.z,
-				transform.rotation.w
-			);
-
-			// If going backwards, make the throw angle larger then normal
-			if (forwardDirection < 0) {
-				throwAngle *= 2;
-			}
-
-			// Add an upwards (negative) throwing angle
-			rotation *= Quaternion.Euler(-throwAngle, 0, 0);
-
-			// Calculate speed with new rotation, and forward/backward speed
-			forwardForce = forwardSpeed() + throwFlagForce;
-			forwardForce = Mathf.Clamp(forwardDirection * forwardSpeed() + throwFlagForce, 0, forwardForce);
-			force = rotation * new Vector3(0, 0, forwardForce);
-
-			flag.throwFlag(flagPosition, force);
+			throwFlag();
 		}
 	}
 }

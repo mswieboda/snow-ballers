@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 
 public class Team : MonoBehaviour {
 	public Color color;
+	public GameObject deathCamera;
+
 	private NetworkStartPosition[] startPositions;
 	private List<Player> players;
 	private GameMode gameMode;
@@ -37,6 +39,7 @@ public class Team : MonoBehaviour {
 
 			player.transform.rotation = startPosition.transform.rotation;
 			player.setPosition(startPosition.transform.position);
+			player.spawnInitialization();
 		}
 	}
 

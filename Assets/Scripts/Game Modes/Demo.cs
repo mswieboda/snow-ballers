@@ -19,4 +19,7 @@ public class Demo : MonoBehaviour, GameMode {
 
 	public void displayScoreboard() {
 	}
+
+	public void respawnPlayer(Player player, bool isLocal) {
+	}
 }

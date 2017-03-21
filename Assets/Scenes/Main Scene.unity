@@ -382,6 +382,7 @@ MonoBehaviour:
   _gameModeManager: {fileID: 1709221714}
   scoreToWin: 3
   startTimer: 3
+  respawnTime: 3
   canvas: {fileID: 1506949192}
   infoText: {fileID: 1712710884}
 --- !u!1 &132317506
@@ -1473,6 +1474,7 @@ Transform:
   - {fileID: 982770049}
   - {fileID: 2028723557}
   - {fileID: 4060808}
+  - {fileID: 989053253}
   m_Father: {fileID: 92475056}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1489,6 +1491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 1, g: 0, b: 0, a: 1}
+  deathCamera: {fileID: 989053252}
 --- !u!1 &414915778
 GameObject:
   m_ObjectHideFlags: 0
@@ -3306,6 +3309,7 @@ Transform:
   - {fileID: 39265983}
   - {fileID: 1045911780}
   - {fileID: 1196649472}
+  - {fileID: 1234015646}
   m_Father: {fileID: 92475056}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3322,6 +3326,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   color: {r: 0, g: 0, b: 1, a: 1}
+  deathCamera: {fileID: 1234015645}
 --- !u!224 &948458590 stripped
 RectTransform:
   m_PrefabParentObject: {fileID: 224640276821360244, guid: fba0a6835eb65a44e8a25790785f59e9,
@@ -3456,6 +3461,93 @@ MonoBehaviour:
   m_Script: {fileID: -1050975500, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &989053252
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 989053253}
+  - component: {fileID: 989053257}
+  - component: {fileID: 989053256}
+  - component: {fileID: 989053255}
+  - component: {fileID: 989053254}
+  m_Layer: 0
+  m_Name: DeathCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &989053253
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 989053252}
+  m_LocalRotation: {x: -0.11223918, y: -0.8703737, z: 0.23321599, w: -0.41888225}
+  m_LocalPosition: {x: 170, y: 25, z: 250}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 403168592}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 30, y: -231.4, z: 0}
+--- !u!81 &989053254
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 989053252}
+  m_Enabled: 1
+--- !u!92 &989053255
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 989053252}
+  m_Enabled: 1
+--- !u!124 &989053256
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 989053252}
+  m_Enabled: 1
+--- !u!20 &989053257
+Camera:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 989053252}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+  m_StereoMirrorMode: 0
 --- !u!1 &1045911779
 GameObject:
   m_ObjectHideFlags: 0
@@ -3758,6 +3850,93 @@ Transform:
   m_PrefabParentObject: {fileID: 4182390721214598, guid: a61d840110653d2419dec54bcb658187,
     type: 2}
   m_PrefabInternal: {fileID: 845083957}
+--- !u!1 &1234015645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1234015646}
+  - component: {fileID: 1234015650}
+  - component: {fileID: 1234015649}
+  - component: {fileID: 1234015648}
+  - component: {fileID: 1234015647}
+  m_Layer: 0
+  m_Name: DeathCamera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1234015646
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1234015645}
+  m_LocalRotation: {x: 0.25000006, y: -0.24999997, z: 0.066987306, w: 0.9330127}
+  m_LocalPosition: {x: 230, y: 25, z: 105}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 939182570}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 30, y: -30, z: 0}
+--- !u!81 &1234015647
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1234015645}
+  m_Enabled: 1
+--- !u!92 &1234015648
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1234015645}
+  m_Enabled: 1
+--- !u!124 &1234015649
+Behaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1234015645}
+  m_Enabled: 1
+--- !u!20 &1234015650
+Camera:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1234015645}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+  m_StereoMirrorMode: 0
 --- !u!1 &1240394781
 GameObject:
   m_ObjectHideFlags: 0

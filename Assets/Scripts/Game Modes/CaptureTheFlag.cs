@@ -10,27 +10,31 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 
 	public int scoreToWin = 3;
 	public int startTimer = 3;
+	public float respawnTime = 3f;
+
+	public Canvas canvas;
+	public Text infoText;
 
 	private Team [] teams;
 
 	public bool inProgress { get { return mInProgress; } }
-
 	private bool mInProgress;
-
-	public Canvas canvas;
-	public Text infoText;
 
 	void Awake() {
 		canvas = GetComponentInChildren<Canvas>();
 		infoText = canvas.GetComponentInChildren<Text>();
 		canvas.enabled = false;
 
+		teams = transform.GetComponentsInChildren<Team>();
+
+		foreach (Team team in teams) {
+			team.deathCamera.SetActive(false);
+		}
+
 		mInProgress = false;
 	}
 
-	public void startGameMode () {
-		teams = transform.GetComponentsInChildren<Team>();
-
+	public void startGameMode() {
 		List<Player> players = new List<Player>();
 
 		players.AddRange(GameObject.FindObjectsOfType<NetworkedPlayer>());
@@ -137,5 +141,22 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 				teamIndex = 0;
 			}
 		}
+	}
+
+	public void respawnPlayer(Player player, bool isLocal)
+	{
+		if (isLocal) {
+			player.team.deathCamera.SetActive(true);
+		}
+
+		StartCoroutine(respawnWait(respawnTime, player));
+	}
+
+	private IEnumerator respawnWait(float waitTime, Player player) {
+		yield return new WaitForSeconds(waitTime);
+
+		player.team.deathCamera.SetActive(false);
+		player.spawnInitialization();
+		player.team.respawnPlayer(player);
 	}
 }

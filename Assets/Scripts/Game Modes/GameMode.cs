@@ -10,4 +10,5 @@ public interface GameMode {
 	void startGameMode();
 	void stopGameMode();
 	void displayScoreboard();
+	void respawnPlayer(Player player, bool isLocal);
 }

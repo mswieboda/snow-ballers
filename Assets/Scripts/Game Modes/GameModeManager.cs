@@ -89,4 +89,8 @@ public class GameModeManager : NetworkBehaviour {
 			RpcStartGame();
 		}
 	}
+
+	public void respawnPlayer(Player player, bool isLocal) {
+		currentGameMode.respawnPlayer(player, isLocal);
+	}
 }
