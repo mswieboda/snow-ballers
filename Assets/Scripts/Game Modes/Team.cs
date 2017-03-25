@@ -52,6 +52,12 @@ public class Team : MonoBehaviour {
 		player.setPosition(startPosition.transform.position);
 	}
 
+	public void resetScore() {
+		score = 0;
+
+		gameMode.displayScoreboard();
+	}
+
 	public void addScore(int num) {
 		score += num;
 

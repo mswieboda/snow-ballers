@@ -52,6 +52,10 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 			flagTrigger.teamFlag = flag;
 		}
 
+		foreach (Team team in teams) {
+			team.resetScore();
+		}
+
 		assignTeams(players);
 
 		foreach (Team team in teams) {
