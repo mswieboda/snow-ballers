@@ -7,6 +7,10 @@ public class Demo : MonoBehaviour, GameMode {
 	public bool inProgress { get { return mInProgress; } }
 	private bool mInProgress;
 
+	public void startGameMode(bool isServer) {
+		startGameMode();
+	}
+
 	public void startGameMode() {
 		mInProgress = true;
 	}

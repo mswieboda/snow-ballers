@@ -6,7 +6,7 @@ public interface GameMode {
 	GameObject gameObject { get; }
 	bool inProgress { get; }
 
-	void startGameMode();
+	void startGameMode(bool isServer);
 	void stopGameMode();
 	void displayScoreboard();
 	void respawnPlayer(Player player, bool isLocal);

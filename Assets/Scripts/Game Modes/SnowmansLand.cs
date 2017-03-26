@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class SnowmansLand : MonoBehaviour, GameMode {
-	public GameObject snowman;
+	public Snowman snowman;
 
 	private NetworkStartPosition[] startPositions;
 
@@ -16,7 +16,11 @@ public class SnowmansLand : MonoBehaviour, GameMode {
 		startPositions = transform.GetComponentsInChildren<NetworkStartPosition>();
 	}
 
-	public void startGameMode() {
+	public void startGameMode(bool isServer) {
+		if (isServer) {
+			snowman.initialize();
+		}
+
 		mInProgress = true;
 	}
 

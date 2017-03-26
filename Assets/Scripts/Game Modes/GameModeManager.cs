@@ -19,7 +19,7 @@ public class GameModeManager : NetworkBehaviour {
 
 		defaultGameMode = transform.GetComponentInChildren<GameMode>();
 		currentGameMode = defaultGameMode;
-		currentGameMode.startGameMode();
+		currentGameMode.startGameMode(false);
 	}
 
 	public bool gameInProgress { get { return currentGameMode.inProgress; } }
@@ -40,7 +40,7 @@ public class GameModeManager : NetworkBehaviour {
 
 		// TODO: Temporary, will come from lobby when implemented
 		switchGameMode("SnowmansLand");
-		currentGameMode.startGameMode();
+		currentGameMode.startGameMode(isServer);
 	}
 
 	[ClientRpc]

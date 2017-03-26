@@ -31,6 +31,10 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 		mInProgress = false;
 	}
 
+	public void startGameMode(bool isServer) {
+		startGameMode();
+	}
+
 	public void startGameMode() {
 		List<Player> players = new List<Player>();
 

@@ -920,8 +920,16 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	/****************************
 	 * Game Modes - Capture The Flag
 	 ****************************/
-	private void enterSnowman(Snowman snowman) {
-		snowman.setPlayer(this);
+	[Command]
+	void CmdEnterSnowman(bool isLocalPlayer) {
+		snowmanToEnter.setPlayer(this, connectionToClient, isLocalPlayer);
+		RpcEnterSnowman();
+
+	}
+
+	[ClientRpc]
+	void RpcEnterSnowman() {
+		snowmanToEnter = null;
 		disable();
 	}
 
@@ -947,7 +955,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		}
 
 		if (snowmanToEnter) {
-			enterSnowman(snowmanToEnter);
+			CmdEnterSnowman(isLocalPlayer);
 		}
 	}
 }
