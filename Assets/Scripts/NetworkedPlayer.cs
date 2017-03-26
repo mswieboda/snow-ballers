@@ -97,6 +97,8 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 	private int hitPoints;
 	public int maxHitPoints = 3;
 
+	private Snowman snowmanToEnter = null;
+
 	void Update() {
 		if (!isLocalPlayer) {
 			return;
@@ -824,7 +826,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 			if (hasFlag()) {
 				Debug.Log("RpcHitBySnowball() dropFlag");
 				Flag flag = heldFlag;
-			
+				
 				if (flag != null) {
 					Vector3 flagPosition = flag.transform.position;
 
@@ -832,17 +834,22 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 
 					flag.dropFromHolder();
 					flag.transform.position = flagPosition;
+
+					return;
 				}
 			}
-
+			
 			Debug.Log("RpcHitBySnowball() respawn");
 			respawn();
 		}
 	}
 
-	private void respawn() {
+	private void disable() {
 		gameObject.SetActive(false);
-//		mainCamera.enabled = false;
+	}
+
+	private void respawn() {
+		disable();
 		GameModeManager.singleton.respawnPlayer(this, isLocalPlayer);
 	}
 
@@ -879,7 +886,7 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		flag.throwFlag(flagPosition, force);
 	}
 
-	private void OnTriggerEnter(Collider collision) {
+	void OnTriggerEnter(Collider collision) {
 		if (collision.gameObject.CompareTag("Pick Up")) {
 			collision.gameObject.SetActive(false);
 			hasShovel = true;
@@ -894,6 +901,28 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
 		if (flagTrigger != null) {
 			flagTrigger.triggeredBy(this);
 		}
+
+		Snowman snowman = collision.gameObject.GetComponent<Snowman>();
+		if (snowman != null) {
+			Debug.Log("Press Action button to enter snowman");
+			snowmanToEnter = snowman;
+		}
+	}
+
+	void OnTriggerExit(Collider collision) {
+		Snowman snowman = collision.gameObject.GetComponent<Snowman>();
+		if (snowman != null) {
+			Debug.Log("Left snowman, cannot enter it");
+			snowmanToEnter = null;
+		}
+	}
+
+	/****************************
+	 * Game Modes - Capture The Flag
+	 ****************************/
+	private void enterSnowman(Snowman snowman) {
+		snowman.setPlayer(this);
+		disable();
 	}
 
 	/*****************************
@@ -901,16 +930,24 @@ public class NetworkedPlayer : NetworkBehaviour, Player {
      *****************************/
 
 	private void useItem() {
+		if (!Input.GetButtonDown("Action")) {
+			return;
+		}
+
 		//use a shovel.
-		if (hasShovel && Input.GetButton("Action") && characterController.isGrounded) {
+		if (hasShovel && characterController.isGrounded) {
 			shovelGO.SetActive(true);
 		}
 		else {
 			shovelGO.SetActive(false);
 		}
 
-		if (hasFlag() && Input.GetButtonDown("Action")) {
+		if (hasFlag()) {
 			throwFlag();
+		}
+
+		if (snowmanToEnter) {
+			enterSnowman(snowmanToEnter);
 		}
 	}
 }

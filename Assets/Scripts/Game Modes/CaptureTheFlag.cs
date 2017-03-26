@@ -5,9 +5,6 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 
 public class CaptureTheFlag : MonoBehaviour, GameMode {
-	public GameModeManager _gameModeManager;
-	public GameModeManager gameModeManager { get { return _gameModeManager; } }
-
 	public int scoreToWin = 3;
 	public int startTimer = 3;
 	public float respawnTime = 3f;
