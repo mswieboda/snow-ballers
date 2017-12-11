@@ -54,7 +54,7 @@ public class GameModeManager : NetworkBehaviour {
 	void switchGameMode(string gameModeName) {
 		Debug.Log("GameModeManager switchGameMode(" + gameModeName + ")");
 		GameMode gameMode = null;
-		Transform gameModeTransform = transform.FindChild(gameModeName);
+		Transform gameModeTransform = transform.Find(gameModeName);
 
 		if (gameModeTransform != null) {
 			gameMode = gameModeTransform.GetComponent<GameMode>();

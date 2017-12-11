@@ -47,7 +47,7 @@ public class CaptureTheFlag : MonoBehaviour, GameMode {
 			flag.team = team;
 			flag.setBasePosition(flag.transform.position);
 
-			Transform flagBase = team.transform.FindChild("Flag Base");
+			Transform flagBase = team.transform.Find("Flag Base");
 			FlagTrigger flagTrigger = flagBase.GetComponentInChildren<FlagTrigger>();
 			flagTrigger.team = team;
 			flagTrigger.teamFlag = flag;
