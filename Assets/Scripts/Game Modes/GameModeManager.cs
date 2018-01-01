@@ -38,9 +38,14 @@ public class GameModeManager : NetworkBehaviour {
 		Debug.Log("GameModeManager startGame()");
 		Debug.Log("GameModeManager startGame() isLocalPlayer: " + isLocalPlayer + " isServer: " + isServer + " isClient: " + isClient);
 
-		// TODO: Temporary, will come from lobby when implemented
-//		switchGameMode("SnowmansLand");
-		switchGameMode("CaptureTheFlag");
+        // TODO: Temporary, it's random, will come from lobby when implemented
+        string gameMode = "CaptureTheFlag";
+
+        if (Random.value > 0.69) {
+            gameMode = "SnowmansLand";
+        }
+
+		switchGameMode(gameMode);
 		currentGameMode.startGameMode(isServer);
 	}
 
