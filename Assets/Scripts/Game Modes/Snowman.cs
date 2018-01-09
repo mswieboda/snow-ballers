@@ -5,20 +5,34 @@ using UnityEngine.Networking;
 
 public class Snowman : NetworkBehaviour {
 	public Camera mainCamera;
+	public GameObject standHeldSnowballsGO;
+	public GameObject bigSnowballPrefab;
 
 	public float jumpSpeed = 5;
 	public float airDragSpeed = -5f;
+
+	public float secondsToThrowSnowball = 0.3f;
+	public float secondsToMakeSnowball = 0.5f;
+
+	public float throwSnowballForce = 35;
+	public float throwAngleDefault = 3;
 
 	private Player owner;
 	private NetworkConnection ownerNetworkConnection;
 	private CharacterController characterController;
 	private Vector3 movementVector;
 	private float verticalVelocity = 0;
-	private int forwardDirection;
+	private int forwardDirection = 0;
 	private float forwardBackward;
 	private Vector3 jumpVector;
 	private Quaternion jumpRotation;
 	private float stayGroundedVelocity = -0.1f;
+
+	private int snowballs = 3;
+	private float timeLastThrownSnowball;
+	private float timeGettingSnowballs;
+
+	private bool isGettingSnowballs = false;
 
 	void Awake() {
 		characterController = GetComponent<CharacterController>();
@@ -93,6 +107,8 @@ public class Snowman : NetworkBehaviour {
 
 		movement();
 
+		throwActions();
+
 		movementVector = transform.rotation * movementVector * Time.deltaTime;
 		characterController.Move(movementVector);
 	}
@@ -147,5 +163,104 @@ public class Snowman : NetworkBehaviour {
 		transform.rotation = Quaternion.Euler(0, transform.rotation.eulerAngles.y, 0);
 
 		transform.Rotate(0, mouseRotationY, 0);
+	}
+
+	/*****************************
+	 * Throw Snowballs
+     *****************************/
+	private void throwActions() {
+		if(snowballs > 0 && !isGettingSnowballs && Time.time - timeLastThrownSnowball > secondsToThrowSnowball) {
+			if(Input.GetButtonDown("Throw")) {
+				holdSnowball();
+			}
+
+			if(Input.GetButtonUp("Throw")) {
+				GameObject heldSnowball = determineHeldSnowballGO();
+
+				// If we're not holding the "fake" held snowball, don't (create) throw one
+				if (heldSnowball.activeSelf == false) {
+					return;
+				}
+
+				heldSnowball.SetActive(false);
+
+				Transform [] heldSnowballTransforms = determineHeldSnowballGO().GetComponentsInChildren<Transform>();
+
+				foreach (Transform heldSnowballTransform in heldSnowballTransforms) {
+					throwSnowball(heldSnowballTransform);
+				}
+			}	
+		}
+	}
+
+	private GameObject determineHeldSnowballGO() {
+//		if(isCrouched) {
+//			return crouchHeldSnowballGO;
+//		}
+//		else if(isSprinting) {
+//			return sprintHeldSnowballGO;
+//		}
+//		else {
+			return standHeldSnowballsGO;
+//		}
+	}
+
+	private void holdSnowball() {
+		GameObject heldSnowball = determineHeldSnowballGO();
+		heldSnowball.SetActive(true);
+	}
+
+	void throwSnowball(Transform heldSnowballTransform) {
+		timeLastThrownSnowball = Time.time;
+
+//		TODO:
+//		removeSnowball();
+
+		float forwardForce;
+		float throwAngle = throwAngleDefault;
+		Vector3 position, force;
+		Quaternion snowballRotation;
+
+		// Get arm position, add scale.y / 2 to get to hand position
+		position = new Vector3(heldSnowballTransform.position.x, heldSnowballTransform.position.y, heldSnowballTransform.position.z);
+
+		// Get rotation from Player
+		snowballRotation = new Quaternion(
+			transform.rotation.x, 
+			transform.rotation.y, 
+			transform.rotation.z, 
+			transform.rotation.w
+		);
+
+		// If going backwards, make the throw angle larger then normal
+		if (forwardDirection < 0) {
+			throwAngle *= 2;
+		}
+
+		// Add an upwards (negative) throwing angle
+		snowballRotation *= Quaternion.Euler(-throwAngle, 0, 0);
+
+		// Calculate speed with new rotation, and forward/backward speed
+		forwardForce = forwardDirection /* * forwardSpeed() */ + throwSnowballForce;
+		force = snowballRotation * new Vector3(0, 0, forwardForce);
+
+		CmdThrowSnowball(position, force);
+	}
+
+	[Command]
+	void CmdThrowSnowball(Vector3 position, Vector3 force) {
+		GameObject snowball;
+		Rigidbody rb;
+
+		// Create a new snow ball
+		snowball = (GameObject) Instantiate(bigSnowballPrefab, position, Quaternion.identity);
+
+		rb = snowball.GetComponent<Rigidbody>();
+
+		// Apply force to snow ball
+		rb.velocity = force;
+
+		// Add it to the network
+		NetworkServer.Spawn(snowball);
 	}
 }
